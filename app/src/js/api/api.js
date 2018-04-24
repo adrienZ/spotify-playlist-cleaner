@@ -38,7 +38,11 @@ export const getUserToken = () => {
 
 export const getUser = () => {
   if (!getUserToken()) return Promise.reject()
-  return axios.get('https://api.spotify.com/v1/me', headers)
+  return axios.get('https://api.spotify.com/v1/me', headers).catch(error => {
+    if (error.response.status === 401) {
+      return logout()
+    }
+  })
 }
 
 // export const parseUser = () => {

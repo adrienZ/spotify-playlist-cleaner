@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
+import { createStore } from 'redux'
 
-import { getUser } from '@js/api/api'
+import { getUser, getUserToken } from '@js/api/api'
+import userReducer from '@reducers/userReducer'
+
+const store = createStore(userReducer)
+store.dispatch({ type: 'USER_LOGIN', user: null })
 
 export default class Header extends Component {
   constructor() {
@@ -12,10 +17,10 @@ export default class Header extends Component {
 
   componentDidMount() {
     getUser().then(userData => {
-      this.setState({
-        user: userData.data,
-      })
-      console.log(this.state)
+      const user = Object.assign({}, userData.data, { token: getUserToken() })
+
+      store.dispatch({ type: 'USER_LOGIN', user })
+      this.setState({ user })
     })
   }
 
