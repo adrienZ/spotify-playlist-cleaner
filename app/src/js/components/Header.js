@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { createStore } from 'redux'
+import { Link } from 'react-router-dom'
 
 import { getUser, getUserToken } from '@js/api/api'
 import userReducer from '@reducers/userReducer'
@@ -45,9 +46,9 @@ export default class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarColor03">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="#">
-                  Home <span className="sr-only">(current)</span>
-                </a>
+                <Link className="nav-link" to="/songmatch">
+                  song-match <span className="sr-only">(current)</span>
+                </Link>
               </li>
             </ul>
             <div className=" my-2 my-lg-0">

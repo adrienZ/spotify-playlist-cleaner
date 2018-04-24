@@ -9,6 +9,7 @@ import { getUserToken } from '@js/api/api'
 
 import App from '@components/App'
 import Login from '@components/Login'
+import Songmatch from '@components/Songmatch'
 
 const authToken = getUserToken()
 
@@ -35,6 +36,7 @@ export default () => (
     <Route>
       <Switch location={location}>
         <PrivateRoute exact path="/" component={App} />
+        <PrivateRoute exact path="/songmatch" component={Songmatch} />
         <Route exact path="/login" component={Login} />
       </Switch>
     </Route>
