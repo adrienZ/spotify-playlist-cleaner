@@ -9,6 +9,8 @@ import {
   isSpotifyTrackUri,
 } from './utilities'
 
+import store from '@js/Store'
+
 const headers = getApiheaders()
 
 const logout = () => {
@@ -36,13 +38,24 @@ export const getUserToken = () => {
   return accessToken
 }
 
+store.dispatch({ type: 'USER_LOGIN', user: null })
+
 export const getUser = () => {
-  if (!getUserToken()) return Promise.reject()
-  return axios.get('https://api.spotify.com/v1/me', headers).catch(error => {
-    if (error.response.status === 401) {
-      return logout()
-    }
-  })
+  if (store.getState().user) return Promise.resolve(store.getState().user)
+
+  return axios
+    .get('https://api.spotify.com/v1/me', headers)
+    .then(userData => {
+      const user = Object.assign({}, userData.data, { token: getUserToken() })
+
+      store.dispatch({ type: 'USER_LOGIN', user })
+      return user
+    })
+    .catch(error => {
+      if (error.response.status === 401) {
+        return logout()
+      }
+    })
 }
 
 // export const parseUser = () => {

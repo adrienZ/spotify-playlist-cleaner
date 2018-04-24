@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
-import store from '@js/Store'
-import { getUser, getUserToken } from '@js/api/api'
-
-store.dispatch({ type: 'USER_LOGIN', user: null })
+import { getUser } from '@js/api/api'
 
 export default class Header extends Component {
   constructor() {
@@ -15,12 +12,7 @@ export default class Header extends Component {
   }
 
   componentDidMount() {
-    getUser().then(userData => {
-      const user = Object.assign({}, userData.data, { token: getUserToken() })
-
-      store.dispatch({ type: 'USER_LOGIN', user })
-      this.setState({ user })
-    })
+    getUser().then(user => this.setState({ user }))
   }
 
   render() {
