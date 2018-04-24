@@ -1,2 +1,5 @@
 import '@sass/style.scss'
-// import "ejs-loader!@views/index.ejs" // DEV ONLY
+import React from 'react'
+import { render } from 'react-dom'
+
+render(<h1>Hello !</h1>, document.getElementById('root'))

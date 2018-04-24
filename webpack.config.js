@@ -3,28 +3,30 @@ const path = require('path')
 // =======================================================================//
 // !  CONFIG			                                                        //
 // =======================================================================//
-const urls = require('./config/urls');
-const entries = require('./config/entries');
-const loaders = require('./config/loaders');
-const env = require('./config/env');
-const plugins = require('./config/plugins');
-const devServer = require('./config/devserver');
+const urls = require('./config/urls')
+const entries = require('./config/entries')
+const loaders = require('./config/loaders')
+const env = require('./config/env')
+const plugins = require('./config/plugins')
+const devServer = require('./config/devserver')
 
 // src/js
-const jsOutput = path.relative(urls.dev.base, urls.aliases["@js"]) + "/"
+const jsOutput = path.relative(urls.dev.base, urls.aliases['@js']) + '/'
 
-const mainConfig = 	{
+const mainConfig = {
   name: 'MAIN CONFIG',
   devServer: devServer,
-  entry: entries.SCRIPTS,
+  entry: Object.assign({}, entries.SCRIPTS, { hot: 'react-hot-loader/patch' }),
   resolve: {
-    alias: urls.aliases
+    alias: urls.aliases,
   },
   output: {
     path: urls.prod.base,
-    publicPath: env.devMode ? "" : env.prodUrl || "",
+    publicPath: env.devMode ? '' : env.prodUrl || '',
     // not at the root
-    filename: env.devMode ? jsOutput + '[name].js' : jsOutput + '[name].[hash:8].js'
+    filename: env.devMode
+      ? jsOutput + '[name].js'
+      : jsOutput + '[name].[hash:8].js',
   },
   devtool: env.devMode ? 'cheap-module-eval-source-map' : 'eval',
   module: {
@@ -34,10 +36,10 @@ const mainConfig = 	{
       loaders.sass,
       loaders.css,
       loaders.files,
-      loaders.imgs
-    ]
+      loaders.imgs,
+    ],
   },
-  plugins: plugins.mainConfigPlugins
+  plugins: plugins.mainConfigPlugins,
 }
 
-module.exports = mainConfig;
+module.exports = mainConfig
