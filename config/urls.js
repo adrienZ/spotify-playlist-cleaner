@@ -21,6 +21,7 @@ const urls = {
 const aliases = {
   '@base': path.resolve(urls.dev.base),
   '@js': path.resolve(urls.dev.assets, 'js/'),
+  '@components': path.resolve(urls.dev.assets, 'js/components'),
   '@sass': path.resolve(urls.dev.assets, 'sass/'),
   '@img': path.resolve(urls.dev.media, 'img/'),
   '@fonts': path.resolve(urls.dev.media, 'fonts/'),

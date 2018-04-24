@@ -3,9 +3,9 @@
     "target": "es6",
     "baseUrl": "./app/src/js",
     "paths": {
-      "@js/*": ["./*"],
+      "@components/*": ["./components/*.js"]
       // "@img/*": ["../src/media/img/*"],
     }
   },
-  "include": ["app/src/**/*"],
+  "include": ["app/src/**/*"]
 }
