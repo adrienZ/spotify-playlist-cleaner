@@ -1,0 +1,53 @@
+{
+  "extends": "eslint:recommended",
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "jquery": false,
+    "node": true,
+    "es6": true,
+    "mocha": false
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+
+  "rules": {
+    "no-console": "warn",
+    "no-debugger": "warn",
+    "no-unused-vars": "warn",
+    "no-var": "warn",
+    "no-implied-eval": "warn",
+
+    "semi": 0,
+    "indent": ["error", 2],
+    "no-multi-spaces": "error",
+    "no-multiple-empty-lines": ["error", {
+      "max": 5,
+      "maxEOF": 1
+    }],
+    "no-duplicate-imports": "error",
+    "space-infix-ops": ["error", {
+      "int32Hint": false
+    }],
+
+    "valid-jsdoc": ["warn", {
+      "requireReturn": false,
+      "requireReturnType": false,
+      "requireParamDescription": false,
+      "requireReturnDescription": false
+    }],
+    "require-jsdoc": ["warn", {
+      "require": {
+        "FunctionDeclaration": false,
+        "MethodDefinition": false,
+        "ClassDeclaration": false
+      }
+    }]
+  },
+  "settings": { "import/resolver": "webpack" }
+}
