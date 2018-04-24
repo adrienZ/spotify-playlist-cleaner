@@ -28,10 +28,10 @@ export const getUserToken = () => {
     accessToken = UrlParamToken
   }
 
-  if (UrlParamToken)
-    window.location.replace(
-      window.location.href.replace(window.location.hash, '')
-    )
+  // if (UrlParamToken)
+  //   window.location.replace(
+  //     window.location.href.replace(window.location.hash, '')
+  //   )
 
   if (accessToken) window.localStorage.setItem('userToken', accessToken)
 
@@ -41,80 +41,64 @@ export const getUserToken = () => {
 store.dispatch({ type: 'USER_LOGIN', user: null })
 
 export const getUser = () => {
+  // cache
   if (store.getState().user) return Promise.resolve(store.getState().user)
 
-  return axios
-    .get('https://api.spotify.com/v1/me', headers)
-    .then(userData => {
-      const user = Object.assign({}, userData.data, { token: getUserToken() })
-
-      store.dispatch({ type: 'USER_LOGIN', user })
-      return user
-    })
-    .catch(error => {
-      if (error.response.status === 401) {
-        return logout()
-      }
-    })
+  return (
+    axios
+      .get('https://api.spotify.com/v1/me', headers)
+      .then(userData => {
+        const user = Object.assign({}, userData.data, { token: getUserToken() })
+        // send to store
+        store.dispatch({ type: 'USER_LOGIN', user })
+        return user
+      })
+      // handle token expired
+      .catch(error => {
+        if (error.response.status === 401) {
+          return logout()
+        }
+      })
+  )
 }
 
-// export const parseUser = () => {
-//   if (!getUserToken()) return Promise.reject();
+export const getUserPlaylists = () => {
+  // cache
+  if (store.getState().playlists)
+    return Promise.resolve(store.getState().playlists)
 
-//   let appUser = null;
-//   return axios.get(
-//     'https://api.spotify.com/v1/me',
-//     headers,
-//   )
-//   // get User
-//     .then((user) => {
-//       appUser = user;
-//       return axios.get(
-//         `https://api.spotify.com/v1/users/${user.data.id}/playlists?limit=50`,
-//         headers,
-//       );
-//     })
-//     // get remainging user's playlists
-//     .then(responsePlaylists => parseUserPlaylists([], responsePlaylists.data))
-//     // add tracklists to playlists
-//     .then((done) => {
-//       const userPlaylists = done.filter(d => d.owner.id === appUser.data.id);
-//       return trackifyPlaylists(userPlaylists);
-//     })
-//     // add playlist instance in tracklists
-//     .then(trackifiedPlaylists => Array.from(trackifiedPlaylists)
-//       .map(_trackifiedPlaylist => ({
-//         tracklist: _trackifiedPlaylist.tracks.items.map(tracks => tracks.track),
-//         playlist: _trackifiedPlaylist,
-//       })))
-//     // handle errors
-//     .catch((e) => {
-//       // eslint-disable-next-line
-//       const errorPopup = new tingle.modal({
-//         footer: true,
-//         stickyFooter: true,
-//       });
+  return getUser().then(() =>
+    axios
+      .get('https://api.spotify.com/v1/me/playlists?limit=50', headers)
+      // get remaining playlists
+      .then(responsePlaylists => parseUserPlaylists([], responsePlaylists.data))
+      // send to store
+      .then(rawPlaylists => {
+        const playlists = rawPlaylists.filter(
+          d => d.owner.id === store.getState().user.id
+        )
 
-//       errorPopup.setContent(`
-//       <p>Fail to load url: <code>${e.config.url}</code></p>
-//       <p>You have to reconnect to renew your token</p>
-//       `);
+        store.dispatch({ type: 'USER_PLAYLIST_LISTING', playlists })
+        return playlists
+      })
+  )
+}
 
-//       errorPopup.addFooterBtn('Ok, log me out', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', logout);
-//       errorPopup.addFooterBtn('show full stacktrace', 'tingle-btn tingle-btn--pull-right', (btn) => {
-//         btn.target.remove();
-//         errorPopup.setContent(`${errorPopup.getContent().innerHTML}
-//       <b>Full stacktrace :</b>
-//       <pre>${e.request.responseText}</pre>
-//       `);
-//       });
-//       errorPopup.open();
+export const getUserPlaylistsFull = () => {
+  // cache
+  if (store.getState().playlists_full)
+    return Promise.resolve(store.getState().playlists_full)
 
-//       return {
-//         error: errorPopup,
-//       };
-//     });
-// };
+  return getUserPlaylists().then(userPlaylists => {
+    return trackifyPlaylists(userPlaylists).then(playlists_full => {
+      store.dispatch({
+        type: 'USER_PLAYLIST_FULL',
+        playlists_full,
+      })
+      return playlists_full
+    })
+  })
+}
 
 // export const getDuplicateSongsFromPLaylists = (playlists, specifiedTracks) => {
 //   const allPlaylists = playlists

@@ -35,8 +35,12 @@ export default class SongMatch extends Component {
     }
 
     const request = searchSong(this.state.query, CancelToken).then(matches => {
+      const results = matches.data.tracks
+        ? matches.data.tracks.items
+        : [matches.data]
+
       this.setState({
-        results: matches.data.tracks.items,
+        results,
         request: null,
       })
     })

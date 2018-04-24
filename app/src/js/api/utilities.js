@@ -41,7 +41,7 @@ export const parseUserPlaylists = (
 }
 
 export const trackifyPlaylists = playlists =>
-  Promise.all(playlists.map(playlist => getPlaylistTracks([], playlist)))
+  axios.all(playlists.map(playlist => getPlaylistTracks([], playlist)))
 
 export const getUrlVars = url => {
   let hash
