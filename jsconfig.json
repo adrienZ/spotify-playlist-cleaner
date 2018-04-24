@@ -3,7 +3,9 @@
     "target": "es6",
     "baseUrl": "./app/src/js",
     "paths": {
-      "@components/*": ["./components/*.js"]
+      "@components/*": ["./components/*.js"],
+      "@reducers/*": ["./reducers/*.js"],
+      "@js/*": ["./*.js"]
       // "@img/*": ["../src/media/img/*"],
     }
   },

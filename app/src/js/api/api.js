@@ -38,7 +38,11 @@ export const getUserToken = () => {
 
 export const getUser = () => {
   if (!getUserToken()) return Promise.reject()
-  return axios.get('https://api.spotify.com/v1/me', headers)
+  return axios.get('https://api.spotify.com/v1/me', headers).catch(error => {
+    if (error.response.status === 401) {
+      return logout()
+    }
+  })
 }
 
 // export const parseUser = () => {
@@ -133,12 +137,15 @@ export const getUser = () => {
 // };
 
 /* eslint-disable */
-export const searchSong = str => {
+export const searchSong = (str, cancelToken) => {
   const query = isSpotifyTrackUri(str) || isSpotifyTrackUrl(str) || str
   return isSpotifyTrackUri(str) || isSpotifyTrackUrl(str)
-    ? axios.get(`https://api.spotify.com/v1/tracks/${query}`, headers)
+    ? axios.get(`https://api.spotify.com/v1/tracks/${query}`, headers, {
+        cancelToken,
+      })
     : axios.get(
         `https://api.spotify.com/v1/search?q=${str}&type=track,artist&limit=5`,
-        headers
+        headers,
+        { cancelToken }
       )
 }

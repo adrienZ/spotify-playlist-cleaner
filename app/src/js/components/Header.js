@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
-import { getUser } from '@js/api/api'
+import store from '@js/Store'
+import { getUser, getUserToken } from '@js/api/api'
+
+store.dispatch({ type: 'USER_LOGIN', user: null })
 
 export default class Header extends Component {
   constructor() {
@@ -12,10 +16,10 @@ export default class Header extends Component {
 
   componentDidMount() {
     getUser().then(userData => {
-      this.setState({
-        user: userData.data,
-      })
-      console.log(this.state)
+      const user = Object.assign({}, userData.data, { token: getUserToken() })
+
+      store.dispatch({ type: 'USER_LOGIN', user })
+      this.setState({ user })
     })
   }
 
@@ -40,9 +44,9 @@ export default class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarColor03">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="#">
-                  Home <span className="sr-only">(current)</span>
-                </a>
+                <Link className="nav-link" to="/songmatch">
+                  song-match <span className="sr-only">(current)</span>
+                </Link>
               </li>
             </ul>
             <div className=" my-2 my-lg-0">
