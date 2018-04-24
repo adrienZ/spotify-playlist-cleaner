@@ -36,6 +36,11 @@ export const getUserToken = () => {
   return accessToken
 }
 
+export const getUser = () => {
+  if (!getUserToken()) return Promise.reject()
+  return axios.get('https://api.spotify.com/v1/me', headers)
+}
+
 // export const parseUser = () => {
 //   if (!getUserToken()) return Promise.reject();
 

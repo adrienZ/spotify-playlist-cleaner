@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
 
+import Header from '@components/Header'
+
 export default class App extends Component {
   render() {
-    return <h1>Oui</h1>
+    return (
+      <div className="app">
+        <Header />
+      </div>
+    )
   }
 }
