@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import { getUser } from '@js/api/api'
 
@@ -19,9 +19,9 @@ export default class Header extends Component {
     return (
       <header className="app__header">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <a className="navbar-brand" href="#">
+          <NavLink className="navbar-brand" to="/">
             Sptfy
-          </a>
+          </NavLink>
           <button
             className="navbar-toggler"
             type="button"
@@ -36,12 +36,12 @@ export default class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarColor03">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <Link className="nav-link" to="/songmatch">
+                <NavLink className="nav-link" to="/songmatch">
                   song-match <span className="sr-only">(current)</span>
-                </Link>
+                </NavLink>
               </li>
             </ul>
-            <div className=" my-2 my-lg-0">
+            <div className="my-2 my-lg-0">
               {this.state.user.id ? (
                 <div>
                   <span>Welcome {this.state.user.id}</span>
