@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import { createStore } from 'redux'
 import { Link } from 'react-router-dom'
 
+import store from '@js/Store'
 import { getUser, getUserToken } from '@js/api/api'
-import userReducer from '@reducers/userReducer'
 
-const store = createStore(userReducer)
 store.dispatch({ type: 'USER_LOGIN', user: null })
 
 export default class Header extends Component {

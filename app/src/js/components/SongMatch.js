@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+
 import { searchSong } from '@js/api/api'
+import store from '@js/Store'
 
 import Header from '@components/Header'
 import ListCompact from '@components/ListCompact'
@@ -42,7 +44,7 @@ export default class SongMatch extends Component {
   }
 
   selectSong(song) {
-    console.log(song.id)
+    console.log(song.id, store.getState())
   }
 
   render() {
