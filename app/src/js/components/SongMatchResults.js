@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import store from '@js/Store'
 
 import Loading from '@components/Loading'
 import HeroSong from '@components/HeroSong'
