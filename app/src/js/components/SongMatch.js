@@ -4,7 +4,6 @@ import axios from 'axios'
 
 import { searchSong, getUserRecentTracks } from '@js/api/api'
 
-import Header from '@components/Header'
 import ListCompact from '@components/ListCompact'
 import Loading from '@components/Loading'
 
@@ -66,8 +65,6 @@ export default class SongMatch extends Component {
   render() {
     return (
       <div className="songmatch">
-        <Header />
-
         {this.state.resultRedirect}
 
         <section className="container jumbotron">

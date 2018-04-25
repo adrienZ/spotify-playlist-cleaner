@@ -65,3 +65,11 @@
 .img-fluid {
   width: 100%;
 }
+
+.app__wrapper {
+  min-height: 80%;
+
+  > div {
+    min-height: 80%;
+  }
+}

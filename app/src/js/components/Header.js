@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { getUser } from '@js/api/api'
+import { getUser, logout } from '@js/api/api'
 import Loading from '@components/Loading'
 
 export default class Header extends Component {
@@ -46,10 +46,14 @@ export default class Header extends Component {
               <div className="my-2 my-lg-0">
                 {this.state.user.id ? (
                   <div>
-                    <span>Welcome {this.state.user.id}</span>
+                    {this.state.user.id}
+                    <button onClick={logout} className="btn btn-link">
+                      logout
+                    </button>
                     <img
                       style={{ width: 50 }}
                       src={this.state.user.images[0].url}
+                      className="ml-2 rounded"
                     />
                   </div>
                 ) : (

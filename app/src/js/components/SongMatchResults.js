@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
+import store from '@js/Store'
 
-import Header from '@components/Header'
 import Loading from '@components/Loading'
 import HeroSong from '@components/HeroSong'
 import HeroPlaylist from '@components/HeroPlaylist'
@@ -22,6 +23,7 @@ export default class SongMatchResults extends Component {
       trackToCheck: null,
       status: 'pending',
       results: [],
+      finished: false,
       resultsBackup: [],
       resultsModified: false,
     }
@@ -60,6 +62,7 @@ export default class SongMatchResults extends Component {
         results: detectedPlaylists,
         resultsBackup: detectedPlaylists,
         status: 'ready',
+        finished: true,
         messages: this.state.messages
           .slice(0, -1)
           .concat([playlistDetectedMessage]),
@@ -136,43 +139,48 @@ export default class SongMatchResults extends Component {
 
     return (
       <div className="songmatchResults">
-        <Header />
-
         <section className="container pb-5">
+          <Link to="/songmatch">-- Search an other track</Link>
           <div className="row">
             <div className={`col-md-7 jumbotron row ${headerRowSpacing}`}>
               {this.state.messages.length ? (
-                <div className="col-5 pl-0">
-                  <ul className="list-group">
-                    {this.state.messages.map((message, i) => (
-                      <li
-                        key={i}
-                        className={`list-group-item d-flex justify-content-between align-items-center ${
-                          message.status !== 'done' ? 'disabled pending' : ''
-                        }`}>
-                        {message.label}
-                        <span className="badge badge-primary badge-pill">
-                          {message.value}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ul className="list-group mb-3" style={{ width: '100%' }}>
+                  {this.state.messages.map((message, i) => (
+                    <li
+                      key={i}
+                      className={`list-group-item d-flex justify-content-between align-items-center ${
+                        message.status !== 'done' ? 'disabled pending' : ''
+                      }`}>
+                      {message.label}
+                      <span className="badge badge-primary badge-pill">
+                        {message.value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               ) : (
                 <Loading height="20vh" />
               )}
-              <div className="col-7 pr-0">
-                <p>This operation may take some time (more than a minute)</p>
-                {this.state.status === 'ready' ? (
-                  <button
-                    onClick={this.compare.bind(this)}
-                    className="btn btn-primary">
-                    Compare
-                  </button>
-                ) : (
-                  <Loading height={25} width={200} text="fetching data" />
-                )}
-              </div>
+              {!this.state.finished ? (
+                <div>
+                  <p>This operation may take some time (more than a minute)</p>
+
+                  {this.state.status === 'ready' ? (
+                    <button
+                      onClick={this.compare.bind(this)}
+                      className="btn btn-primary btn-lg">
+                      Search
+                    </button>
+                  ) : (
+                    <Loading height={25} width={200} text="fetching data" />
+                  )}
+                </div>
+              ) : null}
+              {this.state.finished && !this.state.results.length ? (
+                <p className="h4 container">
+                  You dont have this track in any of your playlists !
+                </p>
+              ) : null}
             </div>
 
             {this.state.trackToCheck ? (
@@ -194,7 +202,15 @@ export default class SongMatchResults extends Component {
           ) : (
             ''
           )}
-          <div className="row">
+          {this.state.finished && this.state.results.length ? (
+            <h2 className="text-center my-5">
+              {this.state.results.length} matches found for{' '}
+              <mark>{this.state.trackToCheck.name}</mark> ({this.state.trackToCheck.artists
+                .map(a => a.name)
+                .join(', ')})
+            </h2>
+          ) : null}
+          <div ref={zone => (this.resZone = zone)} className="row">
             {this.state.results.map((p, i) => (
               <div key={p.id} className={`col-md-4 mb-3`}>
                 <HeroPlaylist

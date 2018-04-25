@@ -131,7 +131,7 @@ export const addTrackToPlaylist = (playlist_id, track_uri) => {
   })
 }
 
-export const getUserRecentTracks = (cancelToken, limit = 5) => {
+export const getUserRecentTracks = (cancelToken, limit = 10) => {
   return getUser().then(() => {
     return (
       axios
@@ -156,7 +156,7 @@ export const searchSong = (str, cancelToken) => {
         cancelToken,
       })
     : axios.get(
-        `https://api.spotify.com/v1/search?q=${str}&type=track,artist&limit=5`,
+        `https://api.spotify.com/v1/search?q=${str}&type=track,artist&limit=10`,
         null,
         { cancelToken }
       )
