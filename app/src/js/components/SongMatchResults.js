@@ -24,17 +24,40 @@ export default class SongMatchResults extends Component {
   }
 
   compare() {
+    let playlistDetectedCount = 0
+    let playlistDetectedMessage = {
+      label: 'playlists founded',
+      value: playlistDetectedCount,
+      status: 'pending',
+    }
+
+    this.setState({
+      messages: this.state.messages.concat([playlistDetectedMessage]),
+      status: 'scraping',
+      results: [],
+    })
+
     getUserPlaylistsFull().then(playlists_full => {
       const detectedPlaylists = playlists_full.filter(p => {
         const detected = p.tracks.items.filter(t => {
           if (!t.track) return false
           return t.track.id === this.song_id
         })
-        return detected.length > 0
+
+        if (detected.length > 0) {
+          playlistDetectedCount = playlistDetectedCount + 1
+          playlistDetectedMessage.value = playlistDetectedCount
+          return true
+        }
       })
 
+      playlistDetectedMessage.status = 'done'
       this.setState({
         results: detectedPlaylists,
+        status: 'ready',
+        messages: this.state.messages
+          .slice(0, -1)
+          .concat([playlistDetectedMessage]),
       })
     })
   }
@@ -56,9 +79,16 @@ export default class SongMatchResults extends Component {
       this.setState({
         playlists,
         messages: this.state.messages.concat([
-          `${playlists.length} playlists found`,
-          `${totalTracks} tracks to check`,
-          `This operation may take some time (more than a minute)`,
+          {
+            label: 'playlists to check',
+            value: playlists.length,
+            status: 'done',
+          },
+          {
+            label: ' tracks to check',
+            value: totalTracks,
+            status: 'done',
+          },
         ]),
       })
     })
@@ -78,28 +108,41 @@ export default class SongMatchResults extends Component {
       <div className="songmatchResults">
         <Header />
 
-        <section className="container">
+        <section className="container pb-5">
           <div className="row">
-            <div className={`col-md-7 jumbotron ${headerRowSpacing}`}>
+            <div className={`col-md-7 jumbotron row ${headerRowSpacing}`}>
               {this.state.messages.length ? (
-                this.state.messages.map((message, i) => (
-                  <p className="my-2" key={i}>
-                    {' '}
-                    {message}{' '}
-                  </p>
-                ))
+                <div className="col-5 pl-0">
+                  <ul className="list-group">
+                    {this.state.messages.map((message, i) => (
+                      <li
+                        key={i}
+                        className={`list-group-item d-flex justify-content-between align-items-center ${
+                          message.status !== 'done' ? 'disabled pending' : ''
+                        }`}>
+                        {message.label}
+                        <span className="badge badge-primary badge-pill">
+                          {message.value}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ) : (
                 <Loading height="20vh" />
               )}
-              {this.state.status === 'ready' ? (
-                <button
-                  onClick={this.compare.bind(this)}
-                  className="btn btn-primary">
-                  Compare
-                </button>
-              ) : (
-                <Loading height={25} width={200} text="fetching data" />
-              )}
+              <div className="col-7 pr-0">
+                <p>This operation may take some time (more than a minute)</p>
+                {this.state.status === 'ready' ? (
+                  <button
+                    onClick={this.compare.bind(this)}
+                    className="btn btn-primary">
+                    Compare
+                  </button>
+                ) : (
+                  <Loading height={25} width={200} text="fetching data" />
+                )}
+              </div>
             </div>
 
             {this.state.trackToCheck ? (
@@ -112,15 +155,32 @@ export default class SongMatchResults extends Component {
             )}
           </div>
 
-          <pre>
-            {JSON.stringify(
-              this.state.results.map(p => ({
-                name: p.name,
-              })),
-              null,
-              2
-            )}
-          </pre>
+          <div className="row">
+            {this.state.results.map((p, i) => (
+              <div key={p.id} className="col-md-4 mb-3">
+                <div className="card text-white bg-secondary">
+                  <div className="card-header">match #{i + 1}</div>
+                  <div className="card-body row">
+                    <div className="col-md-6">
+                      <img className="img-fluid" src={p.images[1].url} />
+                    </div>
+                    <div className="col-md-6">
+                      <p className="card-text">
+                        <h5 className="card-title mb-0">{p.name}</h5>
+                        <p>from {p.owner.id}</p>
+                        <button type="button" className="btn btn-danger">
+                          Danger
+                        </button>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="card-footer text-white">
+                    <p className="my-0 pending">{p.tracks.total} tracks</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
     )

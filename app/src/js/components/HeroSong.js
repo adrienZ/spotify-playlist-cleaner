@@ -15,7 +15,7 @@ export default class HeroSong extends Component {
     const song = this.props.song
 
     return (
-      <div className={`card p-0 ${this.props.bootstrapClasses}`}>
+      <div className={`card p-0 sticky-top ${this.props.bootstrapClasses}`}>
         <div className="card-header">Song to check</div>
         <iframe
           src={`https://open.spotify.com/embed/track/${song.id}`}
