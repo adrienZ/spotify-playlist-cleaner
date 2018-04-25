@@ -51,6 +51,12 @@ if (!env.devMode) {
   // some webpack optimization
   mainConfigPlugins.push(new webpack.optimize.OccurrenceOrderPlugin())
   mainConfigPlugins.push(new webpack.optimize.ModuleConcatenationPlugin())
+  mainConfigPlugins.push(
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    })
+  )
+  mainConfigPlugins.push(new webpack.optimize.UglifyJsPlugin())
 
   // clear dist folder
   if (env.clearDist) {
