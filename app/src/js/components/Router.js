@@ -11,14 +11,15 @@ import App from '@components/App'
 import Login from '@components/Login'
 import Songmatch from '@components/Songmatch'
 import SongmatchResults from '@components/SongmatchResults'
+import AppWrapper from '@components/AppWrapper'
 
 const authToken = getUserToken()
 
 const PrivateRoute = ({ component: Component }, ...props) => (
   <Route
     {...props}
-    render={props =>
-      authToken ? (
+    render={props => {
+      return authToken ? (
         <Component {...props} />
       ) : (
         <Redirect
@@ -28,22 +29,24 @@ const PrivateRoute = ({ component: Component }, ...props) => (
           }}
         />
       )
-    }
+    }}
   />
 )
 
 export default () => (
   <Router>
     <Route>
-      <Switch location={location}>
-        <PrivateRoute exact path="/" component={App} />
-        <PrivateRoute exact path="/songmatch" component={Songmatch} />
-        <PrivateRoute
-          path="/songmatch/results/:id"
-          component={SongmatchResults}
-        />
-        <Route exact path="/login" component={Login} />
-      </Switch>
+      <AppWrapper>
+        <Switch location={location}>
+          <PrivateRoute exact path="/" component={App} />
+          <PrivateRoute exact path="/songmatch" component={Songmatch} />
+          <PrivateRoute
+            path="/songmatch/results/:id"
+            component={SongmatchResults}
+          />
+          <Route exact path="/login" component={Login} />
+        </Switch>
+      </AppWrapper>
     </Route>
   </Router>
 )

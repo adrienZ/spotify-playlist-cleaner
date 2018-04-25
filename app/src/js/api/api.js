@@ -9,14 +9,26 @@ import {
   isSpotifyTrackUri,
 } from './utilities'
 
+// Add a response interceptor
+axios.interceptors.response.use(null, error => {
+  // Do something with response error
+  if (error.response.status === 401) {
+    logout()
+    console.log('ERROR', error.response, getUserToken())
+  }
+  return Promise.reject(error.responce)
+})
+
 import store from '@js/Store'
 
 const headers = getApiheaders()
+axios.defaults.headers.common = headers.headers
 
 const logout = () => {
   window.localStorage.clear()
   window.location.reload()
 }
+window.logout = logout
 
 export const getUserToken = () => {
   let accessToken = null
@@ -28,10 +40,10 @@ export const getUserToken = () => {
     accessToken = UrlParamToken
   }
 
-  // if (UrlParamToken)
-  //   window.location.replace(
-  //     window.location.href.replace(window.location.hash, '')
-  //   )
+  if (UrlParamToken)
+    window.location.replace(
+      window.location.href.replace(window.location.hash, '')
+    )
 
   if (accessToken) window.localStorage.setItem('userToken', accessToken)
 
@@ -44,22 +56,12 @@ export const getUser = () => {
   // cache
   if (store.getState().user) return Promise.resolve(store.getState().user)
 
-  return (
-    axios
-      .get('https://api.spotify.com/v1/me', headers)
-      .then(userData => {
-        const user = Object.assign({}, userData.data, { token: getUserToken() })
-        // send to store
-        store.dispatch({ type: 'USER_LOGIN', user })
-        return user
-      })
-      // handle token expired
-      .catch(error => {
-        if (error.response.status === 401) {
-          // return logout()
-        }
-      })
-  )
+  return axios.get('https://api.spotify.com/v1/me').then(userData => {
+    const user = Object.assign({}, userData.data, { token: getUserToken() })
+    // send to store
+    store.dispatch({ type: 'USER_LOGIN', user })
+    return user
+  })
 }
 
 export const getUserPlaylists = () => {
@@ -69,7 +71,7 @@ export const getUserPlaylists = () => {
 
   return getUser().then(() =>
     axios
-      .get('https://api.spotify.com/v1/me/playlists?limit=50', headers)
+      .get('https://api.spotify.com/v1/me/playlists?limit=50')
       // get remaining playlists
       .then(responsePlaylists => parseUserPlaylists([], responsePlaylists.data))
       // send to store
@@ -100,49 +102,62 @@ export const getUserPlaylistsFull = () => {
   })
 }
 
-// export const getDuplicateSongsFromPLaylists = (playlists, specifiedTracks) => {
-//   const allPlaylists = playlists
-//     .map(tracks => tracks.tracklist.map(track => (track ? track.id : null)));
-//   const tracksOccrenceCounter = {};
-//   const duplicatedTracks = [];
-//   const allPlaylistsLength = allPlaylists.length;
-//   for (let i = 0; i < allPlaylistsLength; i++) {
-//     const tracks = specifiedTracks ? specifiedTracks.map( t => t.id) : allPlaylists[i];
-//     tracks.map((track, index) => {
-//       const hasPlaylist = allPlaylists[i].indexOf(track) > -1;
-//       if (!track || !hasPlaylist) return false;
-//       if (track && !tracksOccrenceCounter[track]) {
-//         tracksOccrenceCounter[track] = {
-//           data: specifiedTracks ? specifiedTracks[index] : playlists[i].tracklist[index],
-//           count: 1,
-//           playlists: [playlists[i].playlist],
-//         };
-//       } else {
-//         tracksOccrenceCounter[track].count++;
-//         tracksOccrenceCounter[track].playlists.push(playlists[i].playlist);
-//       }
-//     });
-//   }
-//   for (const k in tracksOccrenceCounter) {
-//     const showAt = specifiedTracks ? 0 : 1;
-//     if (tracksOccrenceCounter[k].count > showAt) {
-//       duplicatedTracks.push(tracksOccrenceCounter[k]);
-//     }
-//   }
+export const deleteTrackFromPlaylist = (playlist_id, track_uri) => {
+  return getUser().then(user => {
+    return axios.delete(
+      `https://api.spotify.com/v1/users/${
+        user.id
+      }/playlists/${playlist_id}/tracks`,
+      {
+        data: {
+          tracks: [
+            {
+              uri: track_uri,
+            },
+          ],
+        },
+      }
+    )
+  })
+}
 
-//   return duplicatedTracks.sort((a, b) => b.count - a.count);
-// };
+export const addTrackToPlaylist = (playlist_id, track_uri) => {
+  return getUser().then(user => {
+    return axios.post(
+      `https://api.spotify.com/v1/users/${
+        user.id
+      }/playlists/${playlist_id}/tracks?uris=${track_uri}`
+    )
+  })
+}
+
+export const getUserRecentTracks = (cancelToken, limit = 10) => {
+  return getUser().then(() => {
+    return (
+      axios
+        .get(
+          `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,
+          null,
+          { cancelToken }
+        )
+        // oooopsie
+        .then(recentPlays => ({
+          data: { tracks: { items: recentPlays.data.items.map(i => i.track) } },
+        }))
+    )
+  })
+}
 
 /* eslint-disable */
 export const searchSong = (str, cancelToken) => {
   const query = isSpotifyTrackUri(str) || isSpotifyTrackUrl(str) || str
   return isSpotifyTrackUri(str) || isSpotifyTrackUrl(str)
-    ? axios.get(`https://api.spotify.com/v1/tracks/${query}`, headers, {
+    ? axios.get(`https://api.spotify.com/v1/tracks/${query}`, null, {
         cancelToken,
       })
     : axios.get(
-        `https://api.spotify.com/v1/search?q=${str}&type=track,artist&limit=5`,
-        headers,
+        `https://api.spotify.com/v1/search?q=${str}&type=track,artist&limit=10`,
+        null,
         { cancelToken }
       )
 }

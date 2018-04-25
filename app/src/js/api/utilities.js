@@ -65,3 +65,5 @@ export const isSpotifyTrackUrl = str => {
   const isUrl = /^(https:\/\/open.spotify.com\/track\/)/.test(str)
   return isUrl ? str.split('https://open.spotify.com/track/')[1] : false
 }
+
+export const diffArrays = (arr1, arr2) => arr1.filter(x => !arr2.includes(x))
