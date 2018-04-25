@@ -9,16 +9,18 @@ const headers = getApiheaders()
 
 export const getPlaylistTracks = (tracksAccumulator = [], playlist) => {
   const allTracks = tracksAccumulator.id ? tracksAccumulator : playlist
+  allTracks.tracks.items = tracksAccumulator.id ? allTracks.tracks.items : []
 
   return axios
     .get(
-      tracksAccumulator.id
-        ? tracksAccumulator.tracks.next
-        : playlist.tracks.href,
+      allTracks.tracks.next ? allTracks.tracks.next : allTracks.tracks.href,
       headers
     )
     .then(tracks => {
-      allTracks.tracks = Object.assign(allTracks.tracks, tracks.data)
+      const previousTracks = [...allTracks.tracks.items]
+      allTracks.tracks = tracks.data
+      allTracks.tracks.items = previousTracks.concat(tracks.data.items)
+
       return tracks.data.next
         ? getPlaylistTracks(allTracks, tracks.data)
         : allTracks

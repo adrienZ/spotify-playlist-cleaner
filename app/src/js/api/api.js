@@ -56,7 +56,7 @@ export const getUser = () => {
       // handle token expired
       .catch(error => {
         if (error.response.status === 401) {
-          return logout()
+          // return logout()
         }
       })
   )
