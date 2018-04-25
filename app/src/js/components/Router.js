@@ -17,8 +17,9 @@ const authToken = getUserToken()
 const PrivateRoute = ({ component: Component }, ...props) => (
   <Route
     {...props}
-    render={props =>
-      authToken ? (
+    render={props => {
+      console.log(authToken ? 'connect' : 'redirect')
+      return authToken ? (
         <Component {...props} />
       ) : (
         <Redirect
@@ -28,7 +29,7 @@ const PrivateRoute = ({ component: Component }, ...props) => (
           }}
         />
       )
-    }
+    }}
   />
 )
 

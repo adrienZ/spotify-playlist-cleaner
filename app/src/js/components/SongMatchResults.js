@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import axios from 'axios'
 
 import Header from '@components/Header'
+import Loading from '@components/Loading'
+import HeroSong from '@components/HeroSong'
+
 import { getUserPlaylists, getUserPlaylistsFull, searchSong } from '@js/api/api'
 
 export default class SongMatchResults extends Component {
@@ -68,49 +71,46 @@ export default class SongMatchResults extends Component {
   }
 
   render() {
+    const headerRowSpacing = 'my-4'
+    const HeroSongLayoutClasses = 'col-md-5 offset-md-2 ' + headerRowSpacing
+
     return (
       <div className="songmatchResults">
         <Header />
 
         <section className="container">
           <div className="row">
-            <div className="col-md-6">
-              {this.state.messages.length
-                ? this.state.messages.map((message, i) => (
-                    <p key={i}> {message} </p>
-                  ))
-                : 'loading...'}
+            <div className={`col-md-5 ${headerRowSpacing}`}>
+              {this.state.messages.length ? (
+                this.state.messages.map((message, i) => (
+                  <p className="my-2" key={i}>
+                    {' '}
+                    {message}{' '}
+                  </p>
+                ))
+              ) : (
+                <Loading height="20vh" />
+              )}
+              {this.state.status === 'ready' ? (
+                <button
+                  onClick={this.compare.bind(this)}
+                  className="btn btn-primary">
+                  Compare
+                </button>
+              ) : (
+                <Loading height={25} width={200} text="fetching data" />
+              )}
             </div>
 
             {this.state.trackToCheck ? (
-              <div
-                className="card text-white bg-secondary col-md-6"
-                style={{ maxWidth: '20rem' }}>
-                <div className="card-header">Song to check</div>
-                <div className="card-body">
-                  <h4 className="card-title">{this.state.trackToCheck.name}</h4>
-                  <img src={this.state.trackToCheck.album.images[1].url} />
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the cards content.
-                  </p>
-                </div>
-              </div>
+              <HeroSong
+                song={this.state.trackToCheck}
+                bootstrapClasses={HeroSongLayoutClasses}
+              />
             ) : (
-              'loading...'
+              <Loading height="45vh" className={HeroSongLayoutClasses} />
             )}
           </div>
-
-          {this.state.status === 'ready' ? (
-            <button
-              onClick={this.compare.bind(this)}
-              className="btn btn-primary">
-              {' '}
-              test !!!{' '}
-            </button>
-          ) : (
-            'collecting your playlists informations'
-          )}
 
           <pre>
             {JSON.stringify(

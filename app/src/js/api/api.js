@@ -17,6 +17,7 @@ const logout = () => {
   window.localStorage.clear()
   window.location.reload()
 }
+window.logout = logout
 
 export const getUserToken = () => {
   let accessToken = null
@@ -28,10 +29,10 @@ export const getUserToken = () => {
     accessToken = UrlParamToken
   }
 
-  // if (UrlParamToken)
-  //   window.location.replace(
-  //     window.location.href.replace(window.location.hash, '')
-  //   )
+  if (UrlParamToken)
+    window.location.replace(
+      window.location.href.replace(window.location.hash, '')
+    )
 
   if (accessToken) window.localStorage.setItem('userToken', accessToken)
 
@@ -56,7 +57,7 @@ export const getUser = () => {
       // handle token expired
       .catch(error => {
         if (error.response.status === 401) {
-          // return logout()
+          return logout()
         }
       })
   )
