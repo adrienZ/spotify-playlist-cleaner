@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 
 import { searchSong } from '@js/api/api'
-import store from '@js/Store'
 
 import Header from '@components/Header'
 import ListCompact from '@components/ListCompact'
@@ -14,6 +14,7 @@ export default class SongMatch extends Component {
       query: '',
       request: null,
       results: [],
+      resultRedirect: false,
     }
   }
 
@@ -34,8 +35,12 @@ export default class SongMatch extends Component {
     }
 
     const request = searchSong(this.state.query, CancelToken).then(matches => {
+      const results = matches.data.tracks
+        ? matches.data.tracks.items
+        : [matches.data]
+
       this.setState({
-        results: matches.data.tracks.items,
+        results,
         request: null,
       })
     })
@@ -44,13 +49,17 @@ export default class SongMatch extends Component {
   }
 
   selectSong(song) {
-    console.log(song.id, store.getState())
+    this.setState({
+      resultRedirect: <Redirect push to={`/songmatch/results/${song.id}`} />,
+    })
   }
 
   render() {
     return (
       <div className="songmatch">
         <Header />
+
+        {this.state.resultRedirect}
 
         <section className="container jumbotron">
           <div className="form-group">

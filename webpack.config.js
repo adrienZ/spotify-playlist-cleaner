@@ -22,7 +22,7 @@ const mainConfig = {
   },
   output: {
     path: urls.prod.base,
-    publicPath: env.devMode ? '' : env.prodUrl || '',
+    publicPath: env.devMode ? 'http://localhost:3000/' : env.prodUrl || '',
     // not at the root
     filename: env.devMode
       ? jsOutput + '[name].js'

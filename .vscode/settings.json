@@ -3,7 +3,7 @@
   "prettier.ignorePath": ".prettierignore",
   "prettier.requireConfig": true,
   "[javascript]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[scss]": {
     "editor.formatOnSave": true

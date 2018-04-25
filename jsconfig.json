@@ -4,7 +4,6 @@
     "baseUrl": "./app/src/js",
     "paths": {
       "@components/*": ["./components/*.js"],
-      "@reducers/*": ["./reducers/*.js"],
       "@js/*": ["./*.js"]
       // "@img/*": ["../src/media/img/*"],
     }
