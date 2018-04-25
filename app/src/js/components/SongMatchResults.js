@@ -58,15 +58,23 @@ export default class SongMatchResults extends Component {
       })
 
       playlistDetectedMessage.status = 'done'
-      this.setState({
-        results: detectedPlaylists,
-        resultsBackup: detectedPlaylists,
-        status: 'ready',
-        finished: true,
-        messages: this.state.messages
-          .slice(0, -1)
-          .concat([playlistDetectedMessage]),
-      })
+
+      this.setState(
+        {
+          results: detectedPlaylists,
+          resultsBackup: detectedPlaylists,
+          status: 'ready',
+          finished: true,
+          messages: this.state.messages
+            .slice(0, -1)
+            .concat([playlistDetectedMessage]),
+        },
+        () =>
+          detectedPlaylists.length &&
+          this.resZone.scrollIntoView({
+            behavior: 'smooth',
+          })
+      )
     })
   }
 
@@ -169,7 +177,7 @@ export default class SongMatchResults extends Component {
                     <button
                       onClick={this.compare.bind(this)}
                       className="btn btn-primary btn-lg">
-                      Search
+                      Localize
                     </button>
                   ) : (
                     <Loading height={25} width={200} text="fetching data" />
@@ -179,6 +187,9 @@ export default class SongMatchResults extends Component {
               {this.state.finished && !this.state.results.length ? (
                 <p className="h4 container">
                   You dont have this track in any of your playlists !
+                  <Link className="btn btn-warning mt-2" to="/songmatch">
+                    Return to search
+                  </Link>
                 </p>
               ) : null}
             </div>

@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 
 export default class HeroSong extends Component {
+  constructor() {
+    super()
+    this.state = { audioPreview: false }
+  }
+
   componentDidMount() {
     this.audioPreview.volume = 0.3
   }
@@ -9,6 +14,10 @@ export default class HeroSong extends Component {
     this.audioPreview.paused
       ? this.audioPreview.play()
       : this.audioPreview.pause()
+
+    this.setState({
+      audioPreview: !this.audioPreview.paused || false,
+    })
   }
 
   render() {
@@ -57,7 +66,7 @@ export default class HeroSong extends Component {
             type="button"
             onClick={this.togglePreview.bind(this)}
             className="btn btn-outline-success">
-            Listen preview
+            {!this.state.audioPreview ? 'Listen' : 'Pause'} preview
           </button>
         </div>
       </div>

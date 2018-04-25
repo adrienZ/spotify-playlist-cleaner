@@ -22,7 +22,7 @@ export default class Header extends Component {
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div className="container">
             <NavLink className="navbar-brand" to="/">
-              Sptfy
+              SPL
             </NavLink>
             <button
               className="navbar-toggler"
