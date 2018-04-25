@@ -72,7 +72,7 @@ export default class SongMatchResults extends Component {
 
   render() {
     const headerRowSpacing = 'my-4'
-    const HeroSongLayoutClasses = 'col-md-5 offset-md-2 ' + headerRowSpacing
+    const HeroSongLayoutClasses = 'col-md-4 offset-md-1 ' + headerRowSpacing
 
     return (
       <div className="songmatchResults">
@@ -80,7 +80,7 @@ export default class SongMatchResults extends Component {
 
         <section className="container">
           <div className="row">
-            <div className={`col-md-5 ${headerRowSpacing}`}>
+            <div className={`col-md-7 jumbotron ${headerRowSpacing}`}>
               {this.state.messages.length ? (
                 this.state.messages.map((message, i) => (
                   <p className="my-2" key={i}>

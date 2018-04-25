@@ -9,13 +9,24 @@ import {
   isSpotifyTrackUri,
 } from './utilities'
 
+// Add a response interceptor
+axios.interceptors.response.use(null, error => {
+  // Do something with response error
+  if (error.response.status === 401) {
+    logout()
+    console.log('ERROR', error.response, getUserToken())
+  }
+  return Promise.reject(error.responce)
+})
+
 import store from '@js/Store'
 
 const headers = getApiheaders()
+axios.defaults.headers.common = headers.headers
 
 const logout = () => {
   window.localStorage.clear()
-  window.location.reload()
+  // window.location.reload()
 }
 window.logout = logout
 
@@ -29,10 +40,10 @@ export const getUserToken = () => {
     accessToken = UrlParamToken
   }
 
-  if (UrlParamToken)
-    window.location.replace(
-      window.location.href.replace(window.location.hash, '')
-    )
+  // if (UrlParamToken)
+  //   window.location.replace(
+  //     window.location.href.replace(window.location.hash, '')
+  //   )
 
   if (accessToken) window.localStorage.setItem('userToken', accessToken)
 
@@ -45,22 +56,19 @@ export const getUser = () => {
   // cache
   if (store.getState().user) return Promise.resolve(store.getState().user)
 
-  return (
-    axios
-      .get('https://api.spotify.com/v1/me', headers)
-      .then(userData => {
-        const user = Object.assign({}, userData.data, { token: getUserToken() })
-        // send to store
-        store.dispatch({ type: 'USER_LOGIN', user })
-        return user
-      })
-      // handle token expired
-      .catch(error => {
-        if (error.response.status === 401) {
-          return logout()
-        }
-      })
-  )
+  return axios.get('https://api.spotify.com/v1/me').then(userData => {
+    const user = Object.assign({}, userData.data, { token: getUserToken() })
+    // send to store
+    store.dispatch({ type: 'USER_LOGIN', user })
+    return user
+  })
+  // handle token expired
+  // .catch(error => {
+  //   if (error.response.status === 401) {
+  //     // debugger
+  //     // return logout()
+  //   }
+  // })
 }
 
 export const getUserPlaylists = () => {
@@ -70,7 +78,7 @@ export const getUserPlaylists = () => {
 
   return getUser().then(() =>
     axios
-      .get('https://api.spotify.com/v1/me/playlists?limit=50', headers)
+      .get('https://api.spotify.com/v1/me/playlists?limit=50')
       // get remaining playlists
       .then(responsePlaylists => parseUserPlaylists([], responsePlaylists.data))
       // send to store
@@ -98,6 +106,23 @@ export const getUserPlaylistsFull = () => {
       })
       return playlists_full
     })
+  })
+}
+
+export const getUserRecentTracks = (cancelToken, limit = 5) => {
+  return getUser().then(() => {
+    return (
+      axios
+        .get(
+          `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,
+          null,
+          { cancelToken }
+        )
+        // oooopsie
+        .then(recentPlays => ({
+          data: { tracks: { items: recentPlays.data.items.map(i => i.track) } },
+        }))
+    )
   })
 }
 
@@ -138,12 +163,12 @@ export const getUserPlaylistsFull = () => {
 export const searchSong = (str, cancelToken) => {
   const query = isSpotifyTrackUri(str) || isSpotifyTrackUrl(str) || str
   return isSpotifyTrackUri(str) || isSpotifyTrackUrl(str)
-    ? axios.get(`https://api.spotify.com/v1/tracks/${query}`, headers, {
+    ? axios.get(`https://api.spotify.com/v1/tracks/${query}`, null, {
         cancelToken,
       })
     : axios.get(
         `https://api.spotify.com/v1/search?q=${str}&type=track,artist&limit=5`,
-        headers,
+        null,
         { cancelToken }
       )
 }

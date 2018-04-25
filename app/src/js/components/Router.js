@@ -18,7 +18,7 @@ const PrivateRoute = ({ component: Component }, ...props) => (
   <Route
     {...props}
     render={props => {
-      console.log(authToken ? 'connect' : 'redirect')
+      console.log('AUTH', getUserToken(), authToken ? 'connect' : 'redirect')
       return authToken ? (
         <Component {...props} />
       ) : (
