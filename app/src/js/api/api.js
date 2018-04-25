@@ -26,7 +26,7 @@ axios.defaults.headers.common = headers.headers
 
 const logout = () => {
   window.localStorage.clear()
-  // window.location.reload()
+  window.location.reload()
 }
 window.logout = logout
 
@@ -40,10 +40,10 @@ export const getUserToken = () => {
     accessToken = UrlParamToken
   }
 
-  // if (UrlParamToken)
-  //   window.location.replace(
-  //     window.location.href.replace(window.location.hash, '')
-  //   )
+  if (UrlParamToken)
+    window.location.replace(
+      window.location.href.replace(window.location.hash, '')
+    )
 
   if (accessToken) window.localStorage.setItem('userToken', accessToken)
 
@@ -62,13 +62,6 @@ export const getUser = () => {
     store.dispatch({ type: 'USER_LOGIN', user })
     return user
   })
-  // handle token expired
-  // .catch(error => {
-  //   if (error.response.status === 401) {
-  //     // debugger
-  //     // return logout()
-  //   }
-  // })
 }
 
 export const getUserPlaylists = () => {
@@ -109,6 +102,35 @@ export const getUserPlaylistsFull = () => {
   })
 }
 
+export const deleteTrackFromPlaylist = (playlist_id, track_uri) => {
+  return getUser().then(user => {
+    return axios.delete(
+      `https://api.spotify.com/v1/users/${
+        user.id
+      }/playlists/${playlist_id}/tracks`,
+      {
+        data: {
+          tracks: [
+            {
+              uri: track_uri,
+            },
+          ],
+        },
+      }
+    )
+  })
+}
+
+export const addTrackToPlaylist = (playlist_id, track_uri) => {
+  return getUser().then(user => {
+    return axios.post(
+      `https://api.spotify.com/v1/users/${
+        user.id
+      }/playlists/${playlist_id}/tracks?uris=${track_uri}`
+    )
+  })
+}
+
 export const getUserRecentTracks = (cancelToken, limit = 5) => {
   return getUser().then(() => {
     return (
@@ -125,39 +147,6 @@ export const getUserRecentTracks = (cancelToken, limit = 5) => {
     )
   })
 }
-
-// export const getDuplicateSongsFromPLaylists = (playlists, specifiedTracks) => {
-//   const allPlaylists = playlists
-//     .map(tracks => tracks.tracklist.map(track => (track ? track.id : null)));
-//   const tracksOccrenceCounter = {};
-//   const duplicatedTracks = [];
-//   const allPlaylistsLength = allPlaylists.length;
-//   for (let i = 0; i < allPlaylistsLength; i++) {
-//     const tracks = specifiedTracks ? specifiedTracks.map( t => t.id) : allPlaylists[i];
-//     tracks.map((track, index) => {
-//       const hasPlaylist = allPlaylists[i].indexOf(track) > -1;
-//       if (!track || !hasPlaylist) return false;
-//       if (track && !tracksOccrenceCounter[track]) {
-//         tracksOccrenceCounter[track] = {
-//           data: specifiedTracks ? specifiedTracks[index] : playlists[i].tracklist[index],
-//           count: 1,
-//           playlists: [playlists[i].playlist],
-//         };
-//       } else {
-//         tracksOccrenceCounter[track].count++;
-//         tracksOccrenceCounter[track].playlists.push(playlists[i].playlist);
-//       }
-//     });
-//   }
-//   for (const k in tracksOccrenceCounter) {
-//     const showAt = specifiedTracks ? 0 : 1;
-//     if (tracksOccrenceCounter[k].count > showAt) {
-//       duplicatedTracks.push(tracksOccrenceCounter[k]);
-//     }
-//   }
-
-//   return duplicatedTracks.sort((a, b) => b.count - a.count);
-// };
 
 /* eslint-disable */
 export const searchSong = (str, cancelToken) => {

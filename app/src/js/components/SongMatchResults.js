@@ -4,8 +4,10 @@ import axios from 'axios'
 import Header from '@components/Header'
 import Loading from '@components/Loading'
 import HeroSong from '@components/HeroSong'
+import HeroPlaylist from '@components/HeroPlaylist'
 
 import { getUserPlaylists, getUserPlaylistsFull, searchSong } from '@js/api/api'
+import { diffArrays } from '@js/api/utilities'
 
 export default class SongMatchResults extends Component {
   constructor(props) {
@@ -20,6 +22,8 @@ export default class SongMatchResults extends Component {
       trackToCheck: null,
       status: 'pending',
       results: [],
+      resultsBackup: [],
+      resultsModified: false,
     }
   }
 
@@ -54,6 +58,7 @@ export default class SongMatchResults extends Component {
       playlistDetectedMessage.status = 'done'
       this.setState({
         results: detectedPlaylists,
+        resultsBackup: detectedPlaylists,
         status: 'ready',
         messages: this.state.messages
           .slice(0, -1)
@@ -97,6 +102,31 @@ export default class SongMatchResults extends Component {
       this.setState({
         status: 'ready',
       })
+    })
+  }
+
+  hideOneResult(index) {
+    const newRes = [...this.state.results]
+
+    newRes.splice(index, 1)
+
+    this.setState({
+      results: newRes,
+      resultsModified: true,
+    })
+  }
+
+  restoreResults() {
+    const fromTrash = diffArrays(this.state.resultsBackup, this.state.results)
+    let newRes = [...this.state.resultsBackup]
+    newRes = newRes.map(p => {
+      if (fromTrash.indexOf(p) > -1) p.fromCache = true
+      return p
+    })
+
+    this.setState({
+      results: newRes,
+      resultsModified: false,
     })
   }
 
@@ -155,29 +185,24 @@ export default class SongMatchResults extends Component {
             )}
           </div>
 
+          {this.state.resultsModified ? (
+            <button
+              onClick={this.restoreResults.bind(this)}
+              className="btn btn-link">
+              restore results
+            </button>
+          ) : (
+            ''
+          )}
           <div className="row">
             {this.state.results.map((p, i) => (
-              <div key={p.id} className="col-md-4 mb-3">
-                <div className="card text-white bg-secondary">
-                  <div className="card-header">match #{i + 1}</div>
-                  <div className="card-body row">
-                    <div className="col-md-6">
-                      <img className="img-fluid" src={p.images[1].url} />
-                    </div>
-                    <div className="col-md-6">
-                      <p className="card-text">
-                        <h5 className="card-title mb-0">{p.name}</h5>
-                        <p>from {p.owner.id}</p>
-                        <button type="button" className="btn btn-danger">
-                          Danger
-                        </button>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="card-footer text-white">
-                    <p className="my-0 pending">{p.tracks.total} tracks</p>
-                  </div>
-                </div>
+              <div key={p.id} className={`col-md-4 mb-3`}>
+                <HeroPlaylist
+                  index={i}
+                  playlist={p}
+                  track={this.state.trackToCheck}
+                  hideOneResult={() => this.hideOneResult(i)}
+                />
               </div>
             ))}
           </div>
