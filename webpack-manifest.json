@@ -1,9 +1,9 @@
 {
-  "Store_bundle.js": "src/js/Store_bundle.c563d360.js",
-  "hot.js": "src/js/hot.c563d360.js",
+  "Store_bundle.js": "src/js/Store_bundle.29a8cf8a.js",
+  "hot.js": "src/js/hot.29a8cf8a.js",
   "icons-ddfb11a8a378324cfc69dc89bbb931e7/favicon.png": "icons-ddfb11a8a378324cfc69dc89bbb931e7/apple-touch-startup-image-1496x2048.png",
   "main_bundle.css": "src/css/main_bundle.6f5c2104b91e7096adbeb48d772790b5.css",
-  "main_bundle.js": "src/js/main_bundle.c563d360.js",
-  "reducer_bundle.js": "src/js/reducer_bundle.c563d360.js",
-  "vendor.js": "src/vendor.c563d3601a53f96ea8c5.js"
+  "main_bundle.js": "src/js/main_bundle.29a8cf8a.js",
+  "reducer_bundle.js": "src/js/reducer_bundle.29a8cf8a.js",
+  "vendor.js": "src/vendor.29a8cf8a708892558e3d.js"
 }
