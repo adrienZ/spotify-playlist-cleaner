@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-export default class HeroSong extends Component {
+export default class HeroTrack extends Component {
   constructor() {
     super()
     this.state = { audioPreview: false }
@@ -21,13 +21,13 @@ export default class HeroSong extends Component {
   }
 
   render() {
-    const song = this.props.song
+    const track = this.props.track
 
     return (
       <div className={`card p-0 sticky-top ${this.props.bootstrapClasses}`}>
-        <div className="card-header">Song to check</div>
+        <div className="card-header">Track to check</div>
         <iframe
-          src={`https://open.spotify.com/embed/track/${song.id}`}
+          src={`https://open.spotify.com/embed/track/${track.id}`}
           width="100%"
           height="290"
           frameBorder="0"
@@ -35,15 +35,15 @@ export default class HeroSong extends Component {
         />
         <audio
           ref={audio => (this.audioPreview = audio)}
-          src={song.preview_url}
+          src={track.preview_url}
         />
 
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
-            <b>Album:</b> {song.album.name}
+            <b>Album:</b> {track.album.name}
           </li>
           <li className="list-group-item">
-            <b>Année:</b> {new Date(song.album.release_date).getFullYear()}
+            <b>Année:</b> {new Date(track.album.release_date).getFullYear()}
           </li>
           <li className="list-group-item">
             <b>Popularité:</b>
@@ -51,8 +51,8 @@ export default class HeroSong extends Component {
               <div
                 className="progress-bar bg-success"
                 role="progressbar"
-                style={{ width: `${song.popularity}%` }}
-                aria-valuenow={song.popularity}
+                style={{ width: `${track.popularity}%` }}
+                aria-valuenow={track.popularity}
                 aria-valuemin="0"
                 aria-valuemax="100"
               />

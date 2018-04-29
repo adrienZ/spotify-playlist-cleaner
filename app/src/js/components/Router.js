@@ -13,8 +13,9 @@ import { getUserToken } from '@js/api/User'
 // components
 import App from '@components/App'
 import Login from '@components/Login'
-import Songmatch from '@components/Songmatch'
-import SongmatchResults from '@components/SongmatchResults'
+import TrackMatch from '@components/TrackMatch'
+import ArtistMatch from '@components/ArtistMatch'
+import TrackMatchResults from '@components/TrackMatchResults'
 import AppWrapper from '@components/AppWrapper'
 
 // local vars
@@ -44,10 +45,11 @@ export default () => (
       <AppWrapper>
         <Switch location={location}>
           <PrivateRoute exact path="/" component={App} />
-          <PrivateRoute exact path="/songmatch" component={Songmatch} />
+          <PrivateRoute exact path="/track-match" component={TrackMatch} />
+          <PrivateRoute exact path="/artist-match" component={ArtistMatch} />
           <PrivateRoute
-            path="/songmatch/results/:id"
-            component={SongmatchResults}
+            path="/track-match/results/:id"
+            component={TrackMatchResults}
           />
           <Route exact path="/login" component={Login} />
         </Switch>

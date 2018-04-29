@@ -5,23 +5,23 @@ import { Link } from 'react-router-dom'
 
 // api
 import User from '@js/api/User'
-import { searchSong } from '@js/api/Track'
+import { searchTrack } from '@js/api/Track'
 import { diffArrays } from '@js/api/utilities'
 
 // components
 import Loading from '@components/Loading'
-import HeroSong from '@components/HeroSong'
+import HeroTrack from '@components/HeroTrack'
 import HeroPlaylist from '@components/HeroPlaylist'
 
 // local vars
 const user = new User()
 
-export default class SongMatchResults extends Component {
+export default class TrackMatchResults extends Component {
   constructor(props) {
     super(props)
     this.props = props
     // fucking broken router
-    this.song_id = props.location.pathname.split('/').slice(-1)[0]
+    this.track_id = props.location.pathname.split('/').slice(-1)[0]
 
     this.state = {
       playlists: [],
@@ -48,7 +48,7 @@ export default class SongMatchResults extends Component {
       results: [],
     })
 
-    user.detectSong(this.song_id).then(detectedPlaylists => {
+    user.detectTrack(this.track_id).then(detectedPlaylists => {
       playlistDetectedMessage = Object.assign({}, playlistDetectedMessage, {
         value: detectedPlaylists.length,
         status: 'done',
@@ -75,7 +75,7 @@ export default class SongMatchResults extends Component {
 
   componentDidMount() {
     // spotify uri
-    const getTrack = searchSong('spotify:track:' + this.song_id).then(track =>
+    const getTrack = searchTrack('spotify:track:' + this.track_id).then(track =>
       this.setState({
         trackToCheck: track.data,
       })
@@ -138,12 +138,12 @@ export default class SongMatchResults extends Component {
 
   render() {
     const headerRowSpacing = 'my-4'
-    const HeroSongLayoutClasses = 'col-md-4 offset-md-1 ' + headerRowSpacing
+    const HeroTrackLayoutClasses = 'col-md-4 offset-md-1 ' + headerRowSpacing
 
     return (
-      <div className="songmatchResults">
+      <div className="track-matchResults">
         <section className="container pb-5">
-          <Link to="/songmatch">-- Search an other track</Link>
+          <Link to="/track-match">-- Search an other track</Link>
           <div className="row">
             <div className={`col-md-7 jumbotron row ${headerRowSpacing}`}>
               {this.state.messages.length ? (
@@ -182,7 +182,7 @@ export default class SongMatchResults extends Component {
               {this.state.finished && !this.state.results.length ? (
                 <p className="h4 container">
                   You dont have this track in any of your playlists !
-                  <Link className="btn btn-warning mt-2" to="/songmatch">
+                  <Link className="btn btn-warning mt-2" to="/track-match">
                     Return to search
                   </Link>
                 </p>
@@ -190,12 +190,12 @@ export default class SongMatchResults extends Component {
             </div>
 
             {this.state.trackToCheck ? (
-              <HeroSong
-                song={this.state.trackToCheck}
-                bootstrapClasses={HeroSongLayoutClasses}
+              <HeroTrack
+                track={this.state.trackToCheck}
+                bootstrapClasses={HeroTrackLayoutClasses}
               />
             ) : (
-              <Loading height="45vh" className={HeroSongLayoutClasses} />
+              <Loading height="45vh" className={HeroTrackLayoutClasses} />
             )}
           </div>
 

@@ -14,6 +14,7 @@ export const scopes = [
   'user-read-recently-played',
   'playlist-modify-public',
   'playlist-modify-private',
+  'user-top-read',
 ]
 
 export const apiUrl = 'https://api.spotify.com/v1/'

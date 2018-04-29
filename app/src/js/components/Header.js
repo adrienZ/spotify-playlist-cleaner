@@ -42,8 +42,13 @@ export default class Header extends Component {
             <div className="collapse navbar-collapse" id="navbarColor03">
               <ul className="navbar-nav mr-auto">
                 <li className="nav-item active">
-                  <NavLink className="nav-link" to="/songmatch">
-                    song-match <span className="sr-only">(current)</span>
+                  <NavLink className="nav-link" to="/track-match">
+                    track-match <span className="sr-only">(current)</span>
+                  </NavLink>
+                </li>
+                <li className="nav-item active">
+                  <NavLink className="nav-link" to="/artist-match">
+                    artist-match <span className="sr-only">(current)</span>
                   </NavLink>
                 </li>
               </ul>

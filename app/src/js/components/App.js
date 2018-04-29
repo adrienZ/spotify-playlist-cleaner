@@ -9,8 +9,8 @@ export default class App extends Component {
           <h3>Tasks available</h3>
           <ul>
             <li>
-              <Link to="/songmatch">
-                Song matcher ( Find if you have this song in one of your
+              <Link to="/track-match">
+                Track matcher ( Find if you have this track in one of your
                 playlists)
               </Link>
             </li>

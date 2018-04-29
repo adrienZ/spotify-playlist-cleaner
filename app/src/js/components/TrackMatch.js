@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom'
 import axios from '@js/lib/axios'
 
 // api
-import { searchSong } from '@js/api/Track'
+import { searchTrack } from '@js/api/Track'
 import User from '@js/api/User'
 
 // components
@@ -13,8 +13,9 @@ import Loading from '@components/Loading'
 
 // local vars
 const user = new User()
+const tableLabels = ['Name', 'Artists(s)', 'Album']
 
-export default class SongMatch extends Component {
+export default class TrackMatch extends Component {
   constructor() {
     super()
     this.state = {
@@ -42,7 +43,7 @@ export default class SongMatch extends Component {
     }
 
     const searchPromise = this.state.query
-      ? () => searchSong(this.state.query, CancelToken)
+      ? () => searchTrack(this.state.query, CancelToken)
       : () => new user.getRecentTracks(CancelToken)
 
     const request = searchPromise().then(matches => {
@@ -59,9 +60,9 @@ export default class SongMatch extends Component {
     this.setState({ request })
   }
 
-  selectSong(song) {
+  selectTrack(track) {
     this.setState({
-      resultRedirect: <Redirect push to={`/songmatch/results/${song.id}`} />,
+      resultRedirect: <Redirect push to={`/track-match/results/${track.id}`} />,
     })
   }
 
@@ -71,13 +72,13 @@ export default class SongMatch extends Component {
 
   render() {
     return (
-      <div className="songmatch">
+      <div className="track-match">
         {this.state.resultRedirect}
 
         <section className="container jumbotron">
           <div className="form-group">
             <label className="control-label col-form-label-lg">
-              Search a song {this.state.request && ' - searching...'}
+              Search a Track {this.state.request && ' - searching...'}
             </label>
             <div className="form-group">
               <div className="input-group mb-3">
@@ -106,8 +107,14 @@ export default class SongMatch extends Component {
                 ''
               )}
               <ListCompact
+                labels={tableLabels}
+                rows={track => [
+                  track.name,
+                  track.artists.map(a => a.name).join(', '),
+                  track.album.name,
+                ]}
                 results={this.state.results}
-                onClickHandler={this.selectSong.bind(this)}
+                onClickHandler={this.selectTrack.bind(this)}
               />
             </React.Fragment>
           )) ||
@@ -126,31 +133,13 @@ export default class SongMatch extends Component {
   }
 }
 
-const PlaceholderRow = () => (
-  <td>
-    <Loading height={13} text="" />
-  </td>
-)
-
+// placeholders
+const PlaceholderRow = () => <Loading key height={13} text="" />
 const PlaceholderResults = () => (
-  <table className="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Title</th>
-        <th scope="col">Artist(s)</th>
-        <th scope="col">Album</th>
-      </tr>
-    </thead>
-    <tbody>
-      {[0, 1, 2, 3, 4].map(i => (
-        <tr key={i}>
-          <PlaceholderRow />
-          <PlaceholderRow />
-          <PlaceholderRow />
-          <PlaceholderRow />
-        </tr>
-      ))}
-    </tbody>
-  </table>
+  <ListCompact
+    noIndex
+    labels={tableLabels}
+    rows={() => [0, 1, 2].map(() => <PlaceholderRow key />)}
+    results={[0, 1, 2, 3, 4]}
+  />
 )

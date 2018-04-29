@@ -5,18 +5,22 @@ export default props => (
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Title</th>
-        <th scope="col">Artist(s)</th>
-        <th scope="col">Album</th>
+        {props.labels.map((l, i) => (
+          <th key={i} scope="col">
+            {l}
+          </th>
+        ))}
       </tr>
     </thead>
     <tbody>
-      {props.results.map((song, i) => (
+      {props.results.map((result, i) => (
         <tr key={i} onClick={() => props.onClickHandler(props.results[i])}>
-          <th scope="row">#{i}</th>
-          <td>{song.name}</td>
-          <td>{song.artists.map(a => a.name).join(', ')}</td>
-          <td>{song.album.name}</td>
+          {props.noIndex ? (
+            <th scope="row">{props.rows()[0]}</th>
+          ) : (
+            <th scope="row">{`#${i + 1}`}</th>
+          )}
+          {props.rows(result).map((r, r_i) => <td key={r_i}>{r}</td>)}
         </tr>
       ))}
     </tbody>

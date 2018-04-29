@@ -13,7 +13,7 @@ import { apiUrl } from '@js/api/config'
 // local vars
 store.dispatch({ type: 'USER_LOGIN', user: null })
 store.subscribe(() => {
-  console.log(store.getState())
+  // console.log(store.getState())
 })
 
 export default class User {
@@ -38,6 +38,23 @@ export default class User {
         // oooopsie
         .then(recentPlays => ({
           data: { tracks: { items: recentPlays.data.items.map(i => i.track) } },
+        }))
+    )
+  }
+
+  getRecentArtists(cancelToken, limit = 5) {
+    return new User().me().then(() =>
+      axios
+        .get(
+          `${apiUrl}me/top/artists?limit=${limit}&time_range=short_term`,
+          null,
+          {
+            cancelToken,
+          }
+        )
+        // oooopsie
+        .then(recentArtists => ({
+          data: { artists: { items: recentArtists.data.items } },
         }))
     )
   }
@@ -82,7 +99,7 @@ export default class User {
     )
   }
 
-  detectSong(track_id) {
+  detectTrack(track_id) {
     return this.getPlaylistsFull().then(playlists_full =>
       playlists_full.filter(p => {
         const detected = p.tracks.items.filter(t => {
