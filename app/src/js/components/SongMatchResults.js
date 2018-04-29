@@ -1,13 +1,20 @@
+// libs
 import React, { Component } from 'react'
-import axios from 'axios'
+import axios from '@js/lib/axios'
 import { Link } from 'react-router-dom'
 
+// api
+import User from '@js/api/User'
+import { searchSong } from '@js/api/Track'
+import { diffArrays } from '@js/api/utilities'
+
+// components
 import Loading from '@components/Loading'
 import HeroSong from '@components/HeroSong'
 import HeroPlaylist from '@components/HeroPlaylist'
 
-import { getUserPlaylists, getUserPlaylistsFull, searchSong } from '@js/api/api'
-import { diffArrays } from '@js/api/utilities'
+// local vars
+const user = new User()
 
 export default class SongMatchResults extends Component {
   constructor(props) {
@@ -29,10 +36,9 @@ export default class SongMatchResults extends Component {
   }
 
   compare() {
-    let playlistDetectedCount = 0
     let playlistDetectedMessage = {
       label: 'playlists founded',
-      value: playlistDetectedCount,
+      value: 0,
       status: 'pending',
     }
 
@@ -42,21 +48,11 @@ export default class SongMatchResults extends Component {
       results: [],
     })
 
-    getUserPlaylistsFull().then(playlists_full => {
-      const detectedPlaylists = playlists_full.filter(p => {
-        const detected = p.tracks.items.filter(t => {
-          if (!t.track) return false
-          return t.track.id === this.song_id
-        })
-
-        if (detected.length > 0) {
-          playlistDetectedCount = playlistDetectedCount + 1
-          playlistDetectedMessage.value = playlistDetectedCount
-          return true
-        }
+    user.detectSong(this.song_id).then(detectedPlaylists => {
+      playlistDetectedMessage = Object.assign({}, playlistDetectedMessage, {
+        value: detectedPlaylists.length,
+        status: 'done',
       })
-
-      playlistDetectedMessage.status = 'done'
 
       this.setState(
         {
@@ -85,7 +81,7 @@ export default class SongMatchResults extends Component {
       })
     )
 
-    const showMessages = getUserPlaylists().then(playlists => {
+    const showMessages = user.getPlaylists().then(playlists => {
       const totalTracks = playlists.reduce(
         (acc, playlist) => acc + playlist.tracks.total,
         0

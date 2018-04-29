@@ -1,4 +1,7 @@
+// libs
 import React, { Component } from 'react'
+
+// api
 import config, { scopes } from '@js/api/config'
 
 const authUrl = `https://accounts.spotify.com/authorize/?client_id=${

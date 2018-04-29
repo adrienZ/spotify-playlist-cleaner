@@ -1,9 +1,12 @@
+// libs
 import React, { Component } from 'react'
 
+// api
+import { getUserToken } from '@js/api/User'
+
+// components
 import Header from '@components/Header'
 import Footer from '@components/Footer'
-
-import { getUserToken } from '@js/api/api'
 
 export default class AppWrapper extends Component {
   constructor(props) {

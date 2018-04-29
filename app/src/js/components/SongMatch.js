@@ -1,11 +1,18 @@
+// libs
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
-import axios from 'axios'
+import axios from '@js/lib/axios'
 
-import { searchSong, getUserRecentTracks } from '@js/api/api'
+// api
+import { searchSong } from '@js/api/Track'
+import User from '@js/api/User'
 
+// components
 import ListCompact from '@components/ListCompact'
 import Loading from '@components/Loading'
+
+// local vars
+const user = new User()
 
 export default class SongMatch extends Component {
   constructor() {
@@ -36,7 +43,7 @@ export default class SongMatch extends Component {
 
     const searchPromise = this.state.query
       ? () => searchSong(this.state.query, CancelToken)
-      : () => getUserRecentTracks(CancelToken)
+      : () => new user.getRecentTracks(CancelToken)
 
     const request = searchPromise().then(matches => {
       const results = matches.data.hasOwnProperty('tracks')

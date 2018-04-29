@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '@js/lib/axios'
 
 export const getApiheaders = () => ({
   headers: {

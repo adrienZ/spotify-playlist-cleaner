@@ -15,3 +15,5 @@ export const scopes = [
   'playlist-modify-public',
   'playlist-modify-private',
 ]
+
+export const apiUrl = 'https://api.spotify.com/v1/'

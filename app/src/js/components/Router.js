@@ -1,3 +1,4 @@
+// libs
 import React from 'react'
 import {
   BrowserRouter as Router,
@@ -5,14 +6,18 @@ import {
   Switch,
   Redirect,
 } from 'react-router-dom'
-import { getUserToken } from '@js/api/api'
 
+// api
+import { getUserToken } from '@js/api/User'
+
+// components
 import App from '@components/App'
 import Login from '@components/Login'
 import Songmatch from '@components/Songmatch'
 import SongmatchResults from '@components/SongmatchResults'
 import AppWrapper from '@components/AppWrapper'
 
+// local vars
 const authToken = getUserToken()
 
 const PrivateRoute = ({ component: Component }, ...props) => (

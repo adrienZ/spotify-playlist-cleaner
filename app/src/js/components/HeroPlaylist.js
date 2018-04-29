@@ -1,5 +1,8 @@
+// libs
 import React, { Component } from 'react'
-import { deleteTrackFromPlaylist, addTrackToPlaylist } from '@js/api/api'
+
+// api
+import { deleteTrackFromPlaylist, addTrackToPlaylist } from '@js/api/Track'
 
 export default class HeroPlaylist extends Component {
   constructor(props) {

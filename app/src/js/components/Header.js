@@ -1,7 +1,11 @@
+// libs
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { getUser, logout } from '@js/api/api'
+// api
+import User, { logout } from '@js/api/User'
+
+// components
 import Loading from '@components/Loading'
 
 export default class Header extends Component {
@@ -13,7 +17,7 @@ export default class Header extends Component {
   }
 
   componentDidMount() {
-    getUser().then(user => this.setState({ user }))
+    new User().me().then(user => this.setState({ user }))
   }
 
   render() {
