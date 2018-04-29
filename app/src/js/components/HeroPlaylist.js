@@ -37,7 +37,7 @@ export default class HeroPlaylist extends Component {
     const p = this.props.playlist
 
     return (
-      <div className="card text-white bg-dark">
+      <div className="card text-white bg-dark text-center">
         {/* <div className="card-header">match #{this.props.index + 1}</div> */}
 
         <iframe
@@ -51,8 +51,8 @@ export default class HeroPlaylist extends Component {
         />
         <div className="card-body">
           <div className="card-text">
-            <h5 className="card-title mb-0">{p.name}</h5>
-            <p>
+            <h3 className="card-title mb-2">{p.name}</h3>
+            <p className="mb-4">
               from <i>{p.owner.id}</i>
             </p>
             {this.state.hasDeleted ? (
