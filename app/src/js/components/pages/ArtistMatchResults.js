@@ -5,28 +5,28 @@ import { Link } from 'react-router-dom'
 
 // api
 import User from '@js/api/User'
-import { searchTrack } from '@js/api/Track'
+import { searchArtist, getArtistTracks } from '@js/api/Track'
 import { diffArrays } from '@js/api/utilities'
 
 // components
-import Loading from '@components/Loading'
-import HeroTrack from '@components/HeroTrack'
-import HeroPlaylist from '@components/HeroPlaylist'
+import Loading from '@components/partials/Loading'
+import HeroArtist from '@components/partials/HeroArtist'
+import HeroDuplicate from '@components/partials/HeroDuplicate'
 
 // local vars
 const user = new User()
 
-export default class TrackMatchResults extends Component {
+export default class ArtistMatchResults extends Component {
   constructor(props) {
     super(props)
     this.props = props
     // fucking broken router
-    this.track_id = props.location.pathname.split('/').slice(-1)[0]
+    this.artist_id = props.location.pathname.split('/').slice(-1)[0]
 
     this.state = {
       playlists: [],
       messages: [],
-      trackToCheck: null,
+      artistToCheck: null,
       status: 'pending',
       results: [],
       finished: false,
@@ -37,7 +37,7 @@ export default class TrackMatchResults extends Component {
 
   compare() {
     let playlistDetectedMessage = {
-      label: 'playlists founded',
+      label: 'matches founded',
       value: 0,
       status: 'pending',
     }
@@ -48,39 +48,62 @@ export default class TrackMatchResults extends Component {
       results: [],
     })
 
-    user.detectTrack(this.track_id).then(detectedPlaylists => {
-      playlistDetectedMessage = Object.assign({}, playlistDetectedMessage, {
-        value: detectedPlaylists.length,
-        status: 'done',
-      })
+    const results = []
 
-      this.setState(
-        {
-          results: detectedPlaylists,
-          resultsBackup: detectedPlaylists,
-          status: 'ready',
-          finished: true,
-          messages: this.state.messages
-            .slice(0, -1)
-            .concat([playlistDetectedMessage]),
-        },
-        () =>
-          detectedPlaylists.length &&
-          this.resZone.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'start',
-          })
+    user
+      .getPlaylistsFull()
+      .then(() =>
+        getArtistTracks(this.state.artistToCheck).then(tracks =>
+          axios
+            .all(
+              tracks.map(t => ({
+                track: t,
+                matches: user
+                  .detectTrack(t.id)
+                  .then(matches => results.push({ track: t, matches })),
+              }))
+            )
+            .then(() =>
+              results.filter(r => {
+                return r.matches.length
+              })
+            )
+        )
       )
-    })
+      .then(res => {
+        playlistDetectedMessage = Object.assign({}, playlistDetectedMessage, {
+          value: res.length,
+          status: 'done',
+        })
+
+        this.setState(
+          {
+            results: res,
+            resultsBackup: res,
+            status: 'ready',
+            finished: true,
+            messages: this.state.messages
+              .slice(0, -1)
+              .concat([playlistDetectedMessage]),
+          },
+          () =>
+            res.length &&
+            this.resZone.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+              inline: 'start',
+            })
+        )
+      })
   }
 
   componentDidMount() {
     // spotify uri
-    const getTrack = searchTrack('spotify:track:' + this.track_id).then(track =>
-      this.setState({
-        trackToCheck: track.data,
-      })
+    const getArtist = searchArtist('spotify:artist:' + this.artist_id).then(
+      artist =>
+        this.setState({
+          artistToCheck: artist.data,
+        })
     )
 
     const showMessages = user.getPlaylists().then(playlists => {
@@ -106,7 +129,7 @@ export default class TrackMatchResults extends Component {
       })
     })
 
-    axios.all([showMessages, getTrack]).then(() => {
+    axios.all([showMessages, getArtist]).then(() => {
       this.setState({
         status: 'ready',
       })
@@ -127,9 +150,9 @@ export default class TrackMatchResults extends Component {
   restoreResults() {
     const fromTrash = diffArrays(this.state.resultsBackup, this.state.results)
     let newRes = [...this.state.resultsBackup]
-    newRes = newRes.map(p => {
-      if (fromTrash.indexOf(p) > -1) p.fromCache = true
-      return p
+    newRes = newRes.map(r => {
+      if (fromTrash.indexOf(r) > -1) r.track.fromCache = true
+      return r
     })
 
     this.setState({
@@ -140,12 +163,12 @@ export default class TrackMatchResults extends Component {
 
   render() {
     const headerRowSpacing = 'my-4'
-    const HeroTrackLayoutClasses = 'col-md-4 offset-md-1 ' + headerRowSpacing
+    const HeroArtistLayoutClasses = 'col-md-4 offset-md-1 ' + headerRowSpacing
 
     return (
-      <div className="track-matchResults">
+      <div className="artist-matchResults">
         <section className="container pb-5">
-          <Link to="/track-match">-- Search an other track</Link>
+          <Link to="/artist-match">-- Search an other artist</Link>
           <div className="row">
             <div className={`col-md-7 jumbotron row ${headerRowSpacing}`}>
               {this.state.messages.length ? (
@@ -183,21 +206,21 @@ export default class TrackMatchResults extends Component {
               ) : null}
               {this.state.finished && !this.state.results.length ? (
                 <p className="h4 container">
-                  You dont have this track in any of your playlists !
-                  <Link className="btn btn-warning mt-2" to="/track-match">
+                  You dont have this artist in any of your playlists !
+                  <Link className="btn btn-warning mt-2" to="/artist-match">
                     Return to search
                   </Link>
                 </p>
               ) : null}
             </div>
 
-            {this.state.trackToCheck ? (
-              <HeroTrack
-                track={this.state.trackToCheck}
-                bootstrapClasses={HeroTrackLayoutClasses}
+            {this.state.artistToCheck ? (
+              <HeroArtist
+                artist={this.state.artistToCheck}
+                bootstrapClasses={HeroArtistLayoutClasses}
               />
             ) : (
-              <Loading height="45vh" className={HeroTrackLayoutClasses} />
+              <Loading height="45vh" className={HeroArtistLayoutClasses} />
             )}
           </div>
 
@@ -213,17 +236,25 @@ export default class TrackMatchResults extends Component {
           {this.state.finished && this.state.results.length ? (
             <h2 className="text-center my-5">
               {this.state.results.length} matches found for{' '}
-              <mark>{this.state.trackToCheck.name}</mark> ({this.state.trackToCheck.artists
-                .map(a => a.name)
-                .join(', ')})
+              <mark>{this.state.artistToCheck.name}</mark>
+              {this.state.artistToCheck.images.length ? (
+                <img
+                  className="img_rounded ml-3"
+                  alt={this.state.artistToCheck.name}
+                  src={this.state.artistToCheck.images.slice(-1)[0].url}
+                  height={80}
+                />
+              ) : (
+                ''
+              )}
             </h2>
           ) : null}
-          <div ref={zone => (this.resZone = zone)} className="row">
-            {this.state.results.map((p, i) => (
-              <div key={p.id} className={`col-md-4 mb-3`}>
-                <HeroPlaylist
-                  playlist={p}
-                  track={this.state.trackToCheck}
+          <div className="row" ref={zone => (this.resZone = zone)}>
+            {this.state.results.map((d, i) => (
+              <div key={i} className={`col-md-4 mb-3 col-sm-6`}>
+                <HeroDuplicate
+                  matches={d.matches}
+                  track={d.track}
                   hideOneResult={() => this.hideOneResult(i)}
                 />
               </div>

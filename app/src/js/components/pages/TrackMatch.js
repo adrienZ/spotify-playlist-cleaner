@@ -8,8 +8,8 @@ import { searchTrack } from '@js/api/Track'
 import User from '@js/api/User'
 
 // components
-import ListCompact from '@components/ListCompact'
-import Loading from '@components/Loading'
+import ListCompact from '@components/partials/ListCompact'
+import Loading from '@components/partials/Loading'
 
 // local vars
 const user = new User()

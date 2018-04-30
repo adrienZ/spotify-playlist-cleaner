@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom'
 import User, { logout } from '@js/api/User'
 
 // components
-import Loading from '@components/Loading'
+import Loading from '@components/partials/Loading'
 
 export default class Header extends Component {
   constructor() {

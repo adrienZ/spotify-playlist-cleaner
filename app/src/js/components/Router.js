@@ -11,13 +11,13 @@ import {
 import { getUserToken } from '@js/api/User'
 
 // components
-import App from '@components/App'
-import Login from '@components/Login'
-import TrackMatch from '@components/TrackMatch'
-import ArtistMatch from '@components/ArtistMatch'
-import TrackMatchResults from '@components/TrackMatchResults'
-import ArtistMatchResults from '@components/ArtistMatchResults'
-import AppWrapper from '@components/AppWrapper'
+import Home from '@components/pages/Home'
+import Login from '@components/pages/Login'
+import TrackMatch from '@components/pages/TrackMatch'
+import ArtistMatch from '@components/pages/ArtistMatch'
+import TrackMatchResults from '@components/pages/TrackMatchResults'
+import ArtistMatchResults from '@components/pages/ArtistMatchResults'
+import AppWrapper from '@components/partials/AppWrapper'
 
 // local vars
 const authToken = getUserToken()
@@ -45,7 +45,7 @@ export default () => (
     <Route>
       <AppWrapper>
         <Switch location={location}>
-          <PrivateRoute exact path="/" component={App} />
+          <PrivateRoute exact path="/" component={Home} />
           <PrivateRoute exact path="/track-match" component={TrackMatch} />
           <PrivateRoute exact path="/artist-match" component={ArtistMatch} />
           <PrivateRoute
