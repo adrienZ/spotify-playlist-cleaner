@@ -237,6 +237,16 @@ export default class ArtistMatchResults extends Component {
             <h2 className="text-center my-5">
               {this.state.results.length} matches found for{' '}
               <mark>{this.state.artistToCheck.name}</mark>
+              {this.state.artistToCheck.images.length ? (
+                <img
+                  className="img_rounded ml-3"
+                  alt={this.state.artistToCheck.name}
+                  src={this.state.artistToCheck.images.slice(-1)[0].url}
+                  height={80}
+                />
+              ) : (
+                ''
+              )}
             </h2>
           ) : null}
           <div className="row" ref={zone => (this.resZone = zone)}>

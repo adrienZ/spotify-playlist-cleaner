@@ -104,7 +104,7 @@ export default class TrackMatch extends Component {
             <React.Fragment>
               {!this.state.query ? (
                 <p className="text-muted">
-                  <i>Based on what your favorites</i>
+                  <i>Based on your favorites</i>
                 </p>
               ) : (
                 ''

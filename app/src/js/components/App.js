@@ -14,6 +14,12 @@ export default class App extends Component {
                 playlists)
               </Link>
             </li>
+            <li>
+              <Link to="/artist-match">
+                Artist matcher ( Find if you have some of this artist tracks in
+                one of your playlists)
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
