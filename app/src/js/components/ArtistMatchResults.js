@@ -11,7 +11,7 @@ import { diffArrays } from '@js/api/utilities'
 // components
 import Loading from '@components/Loading'
 import HeroArtist from '@components/HeroArtist'
-// import HeroPlaylist from '@components/HeroPlaylist'
+import HeroDuplicate from '@components/HeroDuplicate'
 
 // local vars
 const user = new User()
@@ -37,7 +37,7 @@ export default class ArtistMatchResults extends Component {
 
   compare() {
     let playlistDetectedMessage = {
-      label: 'playlists founded',
+      label: 'matches founded',
       value: 0,
       status: 'pending',
     }
@@ -71,11 +71,29 @@ export default class ArtistMatchResults extends Component {
         )
       )
       .then(res => {
-        console.log(res)
-
-        this.setState({
-          results: res,
+        playlistDetectedMessage = Object.assign({}, playlistDetectedMessage, {
+          value: res.length,
+          status: 'done',
         })
+
+        this.setState(
+          {
+            results: res,
+            resultsBackup: res,
+            status: 'ready',
+            finished: true,
+            messages: this.state.messages
+              .slice(0, -1)
+              .concat([playlistDetectedMessage]),
+          },
+          () =>
+            res.length &&
+            this.resZone.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+              inline: 'start',
+            })
+        )
       })
   }
 
@@ -132,9 +150,9 @@ export default class ArtistMatchResults extends Component {
   restoreResults() {
     const fromTrash = diffArrays(this.state.resultsBackup, this.state.results)
     let newRes = [...this.state.resultsBackup]
-    newRes = newRes.map(p => {
-      if (fromTrash.indexOf(p) > -1) p.fromCache = true
-      return p
+    newRes = newRes.map(r => {
+      if (fromTrash.indexOf(r) > -1) r.track.fromCache = true
+      return r
     })
 
     this.setState({
@@ -218,20 +236,17 @@ export default class ArtistMatchResults extends Component {
           {this.state.finished && this.state.results.length ? (
             <h2 className="text-center my-5">
               {this.state.results.length} matches found for{' '}
-              <mark>{this.state.artistToCheck.name}</mark> ({this.state.artistToCheck.artists
-                .map(a => a.name)
-                .join(', ')})
+              <mark>{this.state.artistToCheck.name}</mark>
             </h2>
           ) : null}
-          <div ref={zone => (this.resZone = zone)} className="row">
-            {this.state.results.map(p => (
-              <div key={p.id} className={`col-md-4 mb-3`}>
-                {/* <HeroPlaylist
-                  index={i}
-                  playlist={p}
-                  track={this.state.artistToCheck}
+          <div className="row" ref={zone => (this.resZone = zone)}>
+            {this.state.results.map((d, i) => (
+              <div key={i} className={`col-md-4 mb-3 col-sm-6`}>
+                <HeroDuplicate
+                  matches={d.matches}
+                  track={d.track}
                   hideOneResult={() => this.hideOneResult(i)}
-                /> */}
+                />
               </div>
             ))}
           </div>

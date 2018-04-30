@@ -68,6 +68,8 @@ export default class TrackMatchResults extends Component {
           detectedPlaylists.length &&
           this.resZone.scrollIntoView({
             behavior: 'smooth',
+            block: 'start',
+            inline: 'start',
           })
       )
     })
@@ -217,7 +219,15 @@ export default class TrackMatchResults extends Component {
             </h2>
           ) : null}
           <div ref={zone => (this.resZone = zone)} className="row">
-            {this.state.results.map(() => 'ez')}
+            {this.state.results.map((p, i) => (
+              <div key={p.id} className={`col-md-4 mb-3`}>
+                <HeroPlaylist
+                  playlist={p}
+                  track={this.state.trackToCheck}
+                  hideOneResult={() => this.hideOneResult(i)}
+                />
+              </div>
+            ))}
           </div>
         </section>
       </div>

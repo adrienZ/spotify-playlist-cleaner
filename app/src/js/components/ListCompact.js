@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default props => (
-  <table className="table table-hover">
+  <table className={`table ${!props.noIndex ? 'table-hover' : ''}`}>
     <thead>
       <tr>
         <th scope="col">#</th>
@@ -14,7 +14,11 @@ export default props => (
     </thead>
     <tbody>
       {props.results.map((result, i) => (
-        <tr key={i} onClick={() => props.onClickHandler(props.results[i])}>
+        <tr
+          key={i}
+          onClick={() =>
+            !props.noIndex && props.onClickHandler(props.results[i])
+          }>
           {props.noIndex ? (
             <th scope="row">{props.rows()[0]}</th>
           ) : (
