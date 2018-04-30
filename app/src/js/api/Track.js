@@ -1,5 +1,6 @@
 // libs
 import axios from '@js/lib/axios'
+import store from '@js/lib/store'
 
 // api
 import User from '@js/api/User'
@@ -7,6 +8,7 @@ import {
   isSpotifyTrackUrl,
   isSpotifyTrackUri,
   isSpotifyArtistUrl,
+  parseArtistTracks,
   isSpotifyArtistUri,
 } from '@js/api/utilities'
 import { apiUrl } from '@js/api/config'
@@ -62,4 +64,25 @@ export const searchArtist = (str, cancelToken) => {
     : axios.get(`${apiUrl}search?q=${str}&type=artist&limit=5`, null, {
         cancelToken,
       })
+}
+
+export const getArtistTracks = artist => {
+  if (
+    store.getState().artist_tracklist &&
+    store.getState().artist_tracklist.id === artist.id
+  ) {
+    return Promise.resolve(
+      store.getState().artist_tracklist.tracklist.tracks.items
+    )
+  }
+
+  return axios
+    .get(`${apiUrl}search?type=track&q=artist:${artist.name}&limit=50`)
+    .then(responsePlaylists => {
+      return parseArtistTracks([], responsePlaylists.data)
+    })
+    .then(tracklist => {
+      store.dispatch({ type: 'ARTIST_TRACKLIST', artist, tracklist })
+      return tracklist.tracks.items
+    })
 }

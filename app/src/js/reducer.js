@@ -8,6 +8,13 @@ export default (state = {}, action) => {
       return Object.assign({}, state, { playlists: action.playlists })
     case 'USER_PLAYLIST_FULL':
       return Object.assign({}, state, { playlists_full: action.playlists_full })
+    case 'ARTIST_TRACKLIST':
+      return Object.assign({}, state, {
+        artist_tracklist: {
+          tracklist: action.tracklist,
+          id: action.artist.id,
+        },
+      })
     default:
       return state
   }

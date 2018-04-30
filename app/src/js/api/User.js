@@ -114,6 +114,21 @@ export default class User {
     )
   }
 
+  detectArtist(track_id) {
+    return this.getPlaylistsFull().then(playlists_full =>
+      playlists_full.filter(p => {
+        const detected = p.tracks.items.filter(t => {
+          if (!t.track) return false
+          return t.track.id === track_id
+        })
+
+        if (detected.length > 0) {
+          return true
+        }
+      })
+    )
+  }
+
   logout() {
     logout()
   }

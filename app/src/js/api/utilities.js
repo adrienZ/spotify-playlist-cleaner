@@ -27,6 +27,25 @@ export const getPlaylistTracks = (tracksAccumulator = [], playlist) => {
     })
 }
 
+export const parseArtistTracks = (tracksAccumulator = [], playlist) => {
+  const allTracks = tracksAccumulator.tracks ? tracksAccumulator : playlist
+
+  return axios
+    .get(
+      allTracks.tracks.next ? allTracks.tracks.next : allTracks.tracks.href,
+      headers
+    )
+    .then(tracks => {
+      const previousTracks = [...allTracks.tracks.items]
+      allTracks.tracks.items = previousTracks.concat(tracks.data.tracks.items)
+      allTracks.tracks.next = tracks.data.tracks.next
+
+      return tracks.data.tracks.next
+        ? parseArtistTracks(allTracks, tracks.data)
+        : allTracks
+    })
+}
+
 export const parseUserPlaylists = (
   playlistAccumulator = [],
   playlistsBuffer

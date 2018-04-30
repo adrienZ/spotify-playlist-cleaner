@@ -16,6 +16,7 @@ import Login from '@components/Login'
 import TrackMatch from '@components/TrackMatch'
 import ArtistMatch from '@components/ArtistMatch'
 import TrackMatchResults from '@components/TrackMatchResults'
+import ArtistMatchResults from '@components/ArtistMatchResults'
 import AppWrapper from '@components/AppWrapper'
 
 // local vars
@@ -50,6 +51,10 @@ export default () => (
           <PrivateRoute
             path="/track-match/results/:id"
             component={TrackMatchResults}
+          />
+          <PrivateRoute
+            path="/artist-match/results/:id"
+            component={ArtistMatchResults}
           />
           <Route exact path="/login" component={Login} />
         </Switch>
