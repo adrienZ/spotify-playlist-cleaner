@@ -20,6 +20,9 @@ export default class App extends Component {
                 one of your playlists)
               </Link>
             </li>
+            <li>
+              <Link to="/all-duplicates">All duplicates in your playlists</Link>
+            </li>
           </ul>
         </div>
       </div>

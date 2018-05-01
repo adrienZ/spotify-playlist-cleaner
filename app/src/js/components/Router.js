@@ -17,6 +17,7 @@ import TrackMatch from '@components/pages/TrackMatch'
 import ArtistMatch from '@components/pages/ArtistMatch'
 import TrackMatchResults from '@components/pages/TrackMatchResults'
 import ArtistMatchResults from '@components/pages/ArtistMatchResults'
+import DuplicatorMatchResults from '@components/pages/DuplicatorMatchResults'
 import AppWrapper from '@components/partials/AppWrapper'
 
 // local vars
@@ -48,6 +49,11 @@ export default () => (
           <PrivateRoute exact path="/" component={Home} />
           <PrivateRoute exact path="/track-match" component={TrackMatch} />
           <PrivateRoute exact path="/artist-match" component={ArtistMatch} />
+          <PrivateRoute
+            exact
+            path="/all-duplicates"
+            component={DuplicatorMatchResults}
+          />
           <PrivateRoute
             path="/track-match/results/:id"
             component={TrackMatchResults}

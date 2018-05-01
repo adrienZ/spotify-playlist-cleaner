@@ -51,6 +51,11 @@ export default class Header extends Component {
                     artist-match <span className="sr-only">(current)</span>
                   </NavLink>
                 </li>
+                <li className="nav-item active">
+                  <NavLink className="nav-link" to="/all-duplicates">
+                    all-duplicates <span className="sr-only">(current)</span>
+                  </NavLink>
+                </li>
               </ul>
               <div className="my-2 my-lg-0">
                 {this.state.user.id ? (

@@ -99,6 +99,43 @@ export default class User {
     )
   }
 
+  getDuplicates(options) {
+    return this.getPlaylistsFull().then(playlists_full => {
+      const duplicatesObj = {}
+      setTimeout(null, options.delay)
+
+      return new Promise(resolve => {
+        setTimeout(() => {
+          playlists_full.reduce((acc, playlist) => {
+            const tracks = playlist.tracks.items
+
+            tracks.map(i => {
+              const track = i.track
+
+              if (!track) return false
+
+              if (duplicatesObj[track.uri]) {
+                duplicatesObj[track.uri].matches = duplicatesObj[
+                  track.uri
+                ].matches.concat([playlist])
+              } else {
+                duplicatesObj[track.uri] = {
+                  track,
+                  matches: [playlist],
+                }
+              }
+            })
+          }, [])
+          resolve(duplicatesObj)
+        }, 0)
+      }).then(dObj =>
+        Object.keys(dObj)
+          .filter(uri => dObj[uri].matches.length > 1)
+          .map(uri => dObj[uri])
+      )
+    })
+  }
+
   detectTrack(track_id) {
     return this.getPlaylistsFull().then(playlists_full =>
       playlists_full.filter(p => {

@@ -75,6 +75,17 @@ export const getUrlVars = url => {
   return myJson
 }
 
+export const asyncTask = callback => {
+  const task = {}
+
+  task.promise = new Promise((resolve, reject) => {
+    Object.assign(task, { resolve, reject })
+    window.setTimeout(callback, 0)
+  })
+
+  return task
+}
+
 export const isSpotifyTrackUri = str => {
   const isUri = /^(spotify:track:)/.test(str)
   return isUri ? str.split('spotify:track:')[1] : false
