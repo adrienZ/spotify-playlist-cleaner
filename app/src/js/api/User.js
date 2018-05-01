@@ -128,11 +128,15 @@ export default class User {
           }, [])
           resolve(duplicatesObj)
         }, 0)
-      }).then(dObj =>
-        Object.keys(dObj)
-          .filter(uri => dObj[uri].matches.length > 1)
-          .map(uri => dObj[uri])
-      )
+      })
+        .then(dObj =>
+          Object.keys(dObj)
+            .filter(uri => dObj[uri].matches.length > 1)
+            .map(uri => dObj[uri])
+        )
+        .then(dupes =>
+          dupes.sort((a, b) => b.matches.length - a.matches.length)
+        )
     })
   }
 
