@@ -18,6 +18,7 @@ import ArtistMatch from '@components/pages/ArtistMatch'
 import TrackMatchResults from '@components/pages/TrackMatchResults'
 import ArtistMatchResults from '@components/pages/ArtistMatchResults'
 import DuplicatorMatchResults from '@components/pages/DuplicatorMatchResults'
+import PlaylistComparator from '@components/pages/PlaylistComparator'
 import AppWrapper from '@components/partials/AppWrapper'
 
 // local vars
@@ -61,6 +62,10 @@ export default () => (
           <PrivateRoute
             path="/artist-match/results/:id"
             component={ArtistMatchResults}
+          />
+          <PrivateRoute
+            path="/playlist-comparator/"
+            component={PlaylistComparator}
           />
           <Route exact path="/login" component={Login} />
         </Switch>

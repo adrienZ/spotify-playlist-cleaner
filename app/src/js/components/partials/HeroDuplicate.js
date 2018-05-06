@@ -17,6 +17,7 @@ export default class HeroDuplicate extends Component {
     addTrackToPlaylist(playlist_id, track_uri).then(() => {
       this.setState({
         hasDeleted: false,
+        lazyload: false,
       })
     })
   }
@@ -29,13 +30,30 @@ export default class HeroDuplicate extends Component {
     })
   }
 
+  componentDidMount() {
+    const lazyload = () => {
+      if (this.dom.getBoundingClientRect().top - window.pageYOffset <= 0) {
+        this.setState({
+          lazyload: true,
+        })
+        window.removeEventListener('scroll', lazyload)
+      }
+    }
+    window.addEventListener('scroll', lazyload)
+  }
+
   render() {
     const track = this.props.track
 
     return (
-      <div className="card text-white bg-dark text-center">
+      <div
+        className="card text-white bg-dark text-center"
+        ref={d => (this.dom = d)}>
         <iframe
-          src={`https://open.spotify.com/embed/track/${track.id}`}
+          src={
+            this.state.lazyload &&
+            `https://open.spotify.com/embed/track/${track.id}`
+          }
           width="100%"
           height="80"
           frameBorder="0"

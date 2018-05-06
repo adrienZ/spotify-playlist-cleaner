@@ -66,6 +66,13 @@
 .pending {
   opacity: 0.5;
 }
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .img-fluid {
   width: 100%;
 }

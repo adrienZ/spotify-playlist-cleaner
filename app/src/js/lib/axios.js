@@ -12,6 +12,8 @@ axios.interceptors.response.use(null, error => {
   if (error.response.status === 401) {
     logout()
     // console.log('ERROR', error.response, getUserToken())
+  } else {
+    alert(error)
   }
   return Promise.reject(error.response)
 })

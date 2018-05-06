@@ -1,13 +1,14 @@
 // libs
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 // api
 import User from '@js/api/User'
-// import { searchTrack } from '@js/api/Track'
 import { diffArrays } from '@js/api/utilities'
 
 // components
 import Loading from '@components/partials/Loading'
+import HeroDuplicate from '@components/partials/HeroDuplicate'
 
 // local vars
 const user = new User()
@@ -50,7 +51,8 @@ export default class DuplicatorMatchResults extends Component {
 
       this.setState(
         {
-          results: detectedDuplicates,
+          // TODO: remove slice
+          results: detectedDuplicates.slice(0, 100),
           resultsBackup: detectedDuplicates,
           status: 'ready',
           finished: true,
@@ -169,10 +171,10 @@ export default class DuplicatorMatchResults extends Component {
               ) : null}
               {this.state.finished && !this.state.results.length ? (
                 <p className="h4 container">
-                  You dont have this track in any of your playlists !
-                  {/* <Link className="btn btn-warning mt-2" to="/track-match">
+                  You dont have in any dupes in your playlists !
+                  <Link className="btn btn-warning mt-2" to="/track-match">
                     Return to search
-                  </Link> */}
+                  </Link>
                 </p>
               ) : null}
             </div>
@@ -194,9 +196,12 @@ export default class DuplicatorMatchResults extends Component {
           ) : null}
           <div ref={zone => (this.resZone = zone)} className="row">
             {this.state.results.map((d, i) => (
-              <div key={i} className={`col-md-4 mb-3`}>
-                <h4>{d.track.name}</h4>
-                <ul>{d.matches.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+              <div key={i} className={`col-md-3 mb-3`}>
+                <HeroDuplicate
+                  matches={d.matches}
+                  track={d.track}
+                  hideOneResult={() => this.hideOneResult(i)}
+                />
               </div>
             ))}
           </div>

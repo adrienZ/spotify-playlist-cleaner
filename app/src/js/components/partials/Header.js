@@ -56,6 +56,12 @@ export default class Header extends Component {
                     all-duplicates <span className="sr-only">(current)</span>
                   </NavLink>
                 </li>
+                <li className="nav-item active">
+                  <NavLink className="nav-link" to="/playlist-comparator">
+                    playlist-comparator{' '}
+                    <span className="sr-only">(current)</span>
+                  </NavLink>
+                </li>
               </ul>
               <div className="my-2 my-lg-0">
                 {this.state.user.id ? (

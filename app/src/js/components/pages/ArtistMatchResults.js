@@ -251,7 +251,7 @@ export default class ArtistMatchResults extends Component {
           ) : null}
           <div className="row" ref={zone => (this.resZone = zone)}>
             {this.state.results.map((d, i) => (
-              <div key={i} className={`col-md-4 mb-3 col-sm-6`}>
+              <div key={i} className={`col-md-3 mb-4 col-sm-6`}>
                 <HeroDuplicate
                   matches={d.matches}
                   track={d.track}
