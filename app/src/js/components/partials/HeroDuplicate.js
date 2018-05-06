@@ -9,7 +9,7 @@ export default class HeroDuplicate extends Component {
     super(props)
 
     this.state = {
-      hasDeleted: props.track.fromCache,
+      hasDeleted: props.fromCache,
     }
   }
 
@@ -31,15 +31,19 @@ export default class HeroDuplicate extends Component {
   }
 
   componentDidMount() {
-    const lazyload = () => {
+    this.lazyload = () => {
       if (this.dom.getBoundingClientRect().top - window.pageYOffset <= 0) {
         this.setState({
           lazyload: true,
         })
-        window.removeEventListener('scroll', lazyload)
+        window.removeEventListener('scroll', this.lazyload)
       }
     }
-    window.addEventListener('scroll', lazyload)
+    window.addEventListener('scroll', this.lazyload)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.lazyload)
   }
 
   render() {

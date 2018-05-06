@@ -11,9 +11,9 @@ import {
 import { apiUrl } from '@js/api/config'
 
 // local vars
-store.dispatch({ type: 'USER_LOGIN', user: null })
 store.subscribe(() => {
   // console.log(store.getState())
+  // alert(JSON.stringify(store.getState()))
 })
 
 export default class User {

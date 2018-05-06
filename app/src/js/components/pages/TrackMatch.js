@@ -21,7 +21,7 @@ export default class TrackMatch extends Component {
 
   render() {
     return (
-      <div className="artist-match">
+      <div className="track-match">
         <Search
           resultsLabels={resultsLabels}
           searchCallback={searchTrack}

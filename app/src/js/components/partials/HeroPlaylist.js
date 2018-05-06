@@ -9,7 +9,7 @@ export default class HeroPlaylist extends Component {
     super(props)
 
     this.state = {
-      hasDeleted: props.playlist.fromCache,
+      hasDeleted: props.fromCache,
     }
   }
 

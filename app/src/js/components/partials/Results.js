@@ -1,5 +1,6 @@
 // libs
 import React, { Component } from 'react'
+import axios from '@js/lib/axios'
 import { Link } from 'react-router-dom'
 
 // api
@@ -8,20 +9,17 @@ import { diffArrays } from '@js/api/utilities'
 
 // components
 import Loading from '@components/partials/Loading'
-import HeroDuplicate from '@components/partials/HeroDuplicate'
 
 // local vars
 const user = new User()
 
-export default class DuplicatorMatchResults extends Component {
+export default class Results extends Component {
   constructor(props) {
     super(props)
-    this.props = props
-
     this.state = {
       playlists: [],
       messages: [],
-      trackToCheck: null,
+      ItemToCheck: null,
       status: 'pending',
       results: [],
       finished: false,
@@ -32,7 +30,7 @@ export default class DuplicatorMatchResults extends Component {
 
   compare() {
     let playlistDetectedMessage = {
-      label: 'playlists founded',
+      label: 'matches founded',
       value: 0,
       status: 'pending',
     }
@@ -43,17 +41,16 @@ export default class DuplicatorMatchResults extends Component {
       results: [],
     })
 
-    user.getDuplicates({ delay: 200 }).then(detectedDuplicates => {
+    this.props.comparePromise(this.state.ItemToCheck).then(res => {
       playlistDetectedMessage = Object.assign({}, playlistDetectedMessage, {
-        value: detectedDuplicates.length,
+        value: res.length,
         status: 'done',
       })
 
       this.setState(
         {
-          // TODO: remove slice
-          results: detectedDuplicates.slice(0, 100),
-          resultsBackup: detectedDuplicates,
+          results: res,
+          resultsBackup: res,
           status: 'ready',
           finished: true,
           messages: this.state.messages
@@ -61,7 +58,7 @@ export default class DuplicatorMatchResults extends Component {
             .concat([playlistDetectedMessage]),
         },
         () =>
-          detectedDuplicates.length &&
+          res.length &&
           this.resZone.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
@@ -72,35 +69,41 @@ export default class DuplicatorMatchResults extends Component {
   }
 
   componentDidMount() {
-    user
-      .getPlaylists()
-      .then(playlists => {
-        const totalTracks = playlists.reduce(
-          (acc, playlist) => acc + playlist.tracks.total,
-          0
-        )
+    // spotify uri
+    const getItem = this.props.itemPromise().then(item =>
+      this.setState({
+        ItemToCheck: item.data,
+      })
+    )
 
-        this.setState({
-          playlists,
-          messages: this.state.messages.concat([
-            {
-              label: 'playlists to check',
-              value: playlists.length,
-              status: 'done',
-            },
-            {
-              label: 'tracks to check',
-              value: totalTracks,
-              status: 'done',
-            },
-          ]),
-        })
+    const showMessages = user.getPlaylists().then(playlists => {
+      const totalTracks = playlists.reduce(
+        (acc, playlist) => acc + playlist.tracks.total,
+        0
+      )
+
+      this.setState({
+        playlists,
+        messages: this.state.messages.concat([
+          {
+            label: 'playlists to check',
+            value: playlists.length,
+            status: 'done',
+          },
+          {
+            label: 'tracks to check',
+            value: totalTracks,
+            status: 'done',
+          },
+        ]),
       })
-      .then(() => {
-        this.setState({
-          status: 'ready',
-        })
+    })
+
+    axios.all([showMessages, getItem]).then(() => {
+      this.setState({
+        status: 'ready',
       })
+    })
   }
 
   hideOneResult(index) {
@@ -117,9 +120,9 @@ export default class DuplicatorMatchResults extends Component {
   restoreResults() {
     const fromTrash = diffArrays(this.state.resultsBackup, this.state.results)
     let newRes = [...this.state.resultsBackup]
-    newRes = newRes.map(d => {
-      if (fromTrash.indexOf(d) > -1) d.fromCache = true
-      return d
+    newRes = newRes.map(r => {
+      if (fromTrash.indexOf(r) > -1) r.fromCache = true
+      return r
     })
 
     this.setState({
@@ -130,10 +133,16 @@ export default class DuplicatorMatchResults extends Component {
 
   render() {
     const headerRowSpacing = 'my-4'
+    const HeroArtistLayoutClasses = 'col-md-4 offset-md-1 ' + headerRowSpacing
 
     return (
-      <div className="duplicator-matchResults">
+      <div className="results">
         <section className="container pb-5">
+          {this.props.returnUrl && (
+            <Link to={this.props.returnUrl}>
+              -- Search an other {this.props.apiTargetKey}
+            </Link>
+          )}
           <div className="row">
             <div className={`col-md-7 jumbotron row ${headerRowSpacing}`}>
               {this.state.messages.length ? (
@@ -171,13 +180,27 @@ export default class DuplicatorMatchResults extends Component {
               ) : null}
               {this.state.finished && !this.state.results.length ? (
                 <p className="h4 container">
-                  You dont have in any dupes in your playlists !
-                  <Link className="btn btn-warning mt-2" to="/track-match">
-                    Return to search
-                  </Link>
+                  You dont have this {this.props.apiTargetKey} in any of your
+                  playlists !
+                  {this.props.returnUrl && (
+                    <Link
+                      className="btn btn-warning mt-2"
+                      to={this.props.returnUrl}>
+                      Return to search
+                    </Link>
+                  )}
                 </p>
               ) : null}
             </div>
+
+            {this.state.ItemToCheck ? (
+              this.props.heroCard(
+                this.state.ItemToCheck,
+                HeroArtistLayoutClasses
+              )
+            ) : (
+              <Loading height="45vh" className={HeroArtistLayoutClasses} />
+            )}
           </div>
 
           {this.state.resultsModified ? (
@@ -192,16 +215,26 @@ export default class DuplicatorMatchResults extends Component {
           {this.state.finished && this.state.results.length ? (
             <h2 className="text-center my-5">
               {this.state.results.length} matches found for{' '}
+              <mark>{this.state.ItemToCheck.name}</mark>
+              {this.state.ItemToCheck.images &&
+              this.state.ItemToCheck.images.length ? (
+                <img
+                  className="img_rounded ml-3"
+                  alt={this.state.ItemToCheck.name}
+                  src={this.state.ItemToCheck.images.slice(-1)[0].url}
+                  height={80}
+                />
+              ) : (
+                ''
+              )}
             </h2>
           ) : null}
-          <div ref={zone => (this.resZone = zone)} className="row">
-            {this.state.results.map((d, i) => (
-              <div key={i} className={`col-md-3 mb-3`}>
-                <HeroDuplicate
-                  matches={d.matches}
-                  track={d.track}
-                  hideOneResult={() => this.hideOneResult(i)}
-                />
+          <div className="row" ref={zone => (this.resZone = zone)}>
+            {this.state.results.map((r, i) => (
+              <div key={i} className={`col-md-3 mb-4 col-sm-6`}>
+                {this.props.resultComponent(r, this.state.ItemToCheck, () =>
+                  this.hideOneResult(i)
+                )}
               </div>
             ))}
           </div>

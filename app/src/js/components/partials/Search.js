@@ -14,7 +14,7 @@ import Loading from '@components/partials/Loading'
 // local vars
 const user = new User()
 
-export default class TrackMatch extends Component {
+export default class Search extends Component {
   constructor() {
     super()
 
@@ -76,7 +76,13 @@ export default class TrackMatch extends Component {
 
   selectItem(obj) {
     this.setState({
-      resultRedirect: <Redirect push to={this.props.redirectUrl(obj.id)} />,
+      resultRedirect: (
+        <Redirect
+          push
+          to={this.props.redirectUrl(obj.id)}
+          itemLabel={this.props.apiTargetKey}
+        />
+      ),
     })
   }
 
@@ -123,7 +129,7 @@ export default class TrackMatch extends Component {
               )}
               <ListCompact
                 labels={this.props.resultsLabels}
-                rows={artist => [this.props.resultRow(artist)]}
+                rows={item => [this.props.resultRow(item)]}
                 results={this.state.results}
                 onClickHandler={this.selectItem.bind(this)}
               />
@@ -144,7 +150,7 @@ export default class TrackMatch extends Component {
   }
 }
 
-TrackMatch.propTypes = {
+Search.propTypes = {
   searchCallback: PropTypes.func.isRequired,
   resultsLabels: PropTypes.array.isRequired,
   searchPlaceholderText: PropTypes.string.isRequired,
@@ -163,11 +169,11 @@ TrackMatch.propTypes = {
         '`. Validation failed.'
     )
 
-    if (typeof propName !== 'string') {
+    if (typeof props[propName] !== 'string') {
       return error
     }
 
-    if (typeof new User()[propName] !== 'function') {
+    if (typeof new User()[props[propName]] !== 'function') {
       return error
     }
   },
