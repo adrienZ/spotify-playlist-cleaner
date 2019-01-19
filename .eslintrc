@@ -1,8 +1,5 @@
 {
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
-  "plugins": [
-    "react"
-  ],
+  "extends": "eslint:recommended",
   "parser": "babel-eslint",
   "env": {
     "browser": true,
@@ -20,12 +17,10 @@
   },
 
   "rules": {
-    "react/display-name": 0,
-    "react/prop-types": 0,
-
-
     "no-console": "warn",
     "no-debugger": "warn",
+    "no-unused-vars": "warn",
+    "no-var": "warn",
     "no-implied-eval": "warn",
 
     "semi": 0,

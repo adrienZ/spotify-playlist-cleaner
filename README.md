@@ -11,7 +11,8 @@
 * ES6, SASS and EJS syntax support.
 * Autoprefixed CSS, so you don’t need `-webkit-` or other prefixes.
 * A live development server that warns about common mistakes.
-* Easily deploy your app to Github Pages.
+* Out-of-the-box Progressive web app support
+* ~~Easily deploy your app to Github Pages.~~
 * A build script to bundle JS, CSS, and images for production, with hashes.
 * Non obtrusive linter with prettier.
 * Aliases (@) to easily include files.
@@ -20,18 +21,17 @@
 ## Installation
 
 This boilerplate requires:
-[Node.js](https://nodejs.org/) v6+ and [Webpack](http://webpack.github.io/docs/).
+[Node.js](https://nodejs.org/) v6+ and [Webpack](https://webpack.js.org/).
 [Yarn](https://yarnpkg.com/) is also great.
 
-```sh
-$ npm i -g webpack
 ```
-
-```
+$ mkdir my-app
+$ cd my-app
 $ curl -L -o master.zip https://github.com/adrienZ/zigzag-boilerplate/archive/master.zip && unzip master.zip && rm master.zip && mv ./zigzag-boilerplate-master/{.,}* ./ && rm -r ./zigzag-boilerplate-master
-$ cd zigzag-boilerplate
 $ npm run hello
 ```
+
+At this point, you'll need to rename `.env.example` into `.env` and add your configuration
 
 ## Commands
 
@@ -40,7 +40,7 @@ $ npm run hello #setup
 ```
 
 ```
-$ npm run start #dev
+$ npm run start #dev on webpack dev server
 ```
 
 ```
@@ -48,19 +48,33 @@ $ npm run build #production
 ```
 
 ```
-$ npm run prettier #make my code pretty
+$ npm run watch #watch and ouput files
+```
+
+#### Code quality
+
+```
+$ npm run prettier format-js #make my js pretty
+```
+
+```
+$ npm run prettier format-scss #make my scss pretty
 ```
 
 ## Deploy
 
-1.  Run this command: `npm run deploy`
+#### Using Github pages
+
+coming soon...
+
+<!-- 1.  Run this command: `npm run deploy`
 2.  Make sure you have activated Github pages in your repository settings and set the `gh-pages` branch as source.
-3.  your app is now live at `https://{your-github-username}.github.io/{repo-name}/`
+3.  your app is now live at `https://{your-github-username}.github.io/{repo-name}/` -->
 
 ## Features
 
 When you follow the folder structure, it give you access to some handy aliases.
-You can found them in `config/urls.js`.
+You can found them in `webpack/urls.js`.
 
 Adding media has never been so easy !
 
